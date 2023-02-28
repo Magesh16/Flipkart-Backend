@@ -59,5 +59,4 @@ const verifyOTPSMS = async (req, res) => {
   }
 };
 
-
 export { getUser, register, login, verifyOTPSMS };

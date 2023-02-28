@@ -12,7 +12,6 @@ client.connect((err)=>{
         console.log('Connected to database');
     }
 });
-// app.use(cookieParser());
 app.use(express.json());
 app.use('/', userRoutes);
 // app.use(errorhandler)

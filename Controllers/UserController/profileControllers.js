@@ -54,13 +54,12 @@ const verifyOTPEMAILSMS = async(req,res)=>{
   const mobilenum = result.rows[0].mobilenum;
   const emailOTP = req.body.emailOTP;
   const SMSOTP = req.body.SMSOTP;
-  console.log(emailOTP, SMSOTP);
+  // console.log(emailOTP, SMSOTP);
   const savedEmailOTP = otpCache[email];
   const savedSMSOTP = otpCacheSMS[mobilenum];
-  console.log(savedEmailOTP.otp, savedSMSOTP.otp);
-
-  console.log(savedEmailOTP.otp == emailOTP);
-  console.log(savedSMSOTP.otp == SMSOTP);
+  // console.log(savedEmailOTP.otp, savedSMSOTP.otp);
+  // console.log(savedEmailOTP.otp == emailOTP);
+  // console.log(savedSMSOTP.otp == SMSOTP);
   if (savedSMSOTP.otp == SMSOTP && savedEmailOTP.otp == emailOTP) {
     await client.query('update userinfo set email =$1 where id =$2', [email, userId]);
     res.status(200).send({status:true ,message: "Email Updated successfully"});
@@ -80,7 +79,6 @@ const verifyOtp = (req, res) => {
     }
   };
 
-// otpCachenewNumber= {}
 const updateProfileMobileNum = async (req,res)=>{
   const newMobilenum = req.body.mobilenum;
   let {userId} = req.user
@@ -99,7 +97,6 @@ const updateProfileMobileNum = async (req,res)=>{
   }
 }
 
-
 const verifyOldNewMobileOTP = async(req,res)=>{
   const newOTP = req.body.newOTP;
   const oldOTP = req.body.oldOTP;
@@ -114,7 +111,6 @@ const verifyOldNewMobileOTP = async(req,res)=>{
     res.status(200).send({status: true, message:"Mobile updated successfully"});
   }else{
     res.status(403).send({status: false, message:"OTP not verified"});
-
   }
 
   
