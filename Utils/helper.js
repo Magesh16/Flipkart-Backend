@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import clientSMS from "./twilio.js";
 import crypto from "crypto";
 import client from "./database.js";
+import transporter from "../Utils/nodemailer.js";
 
 let otpCacheSMS = {};
 const sendOTPSMS = async (mobilenum) => {
@@ -19,16 +20,11 @@ const sendOTPSMS = async (mobilenum) => {
     .then((message) =>
      console.log(`Message sent to ${message.to}: ${message.body}`)
     )
-    // .catch((error) =>
-    //   console.error(`Error sending message to ${toNumber}: ${error.message}`)
-    // );
-
 };
 
 function generateToken(id) {
     return jwt.sign(id, process.env.ACCESS_TOKEN, { expiresIn: "7d" });
   }
-  
 
 async function signin(mobilenum) {
     const result = await client.query(
@@ -57,30 +53,53 @@ async function signin(mobilenum) {
         }
       });
     }
-   return token
+   return token;
   }
-  // let Refresh_Tokens = [];
+           
+let otpCache = {};
 
-// function authenticateRefToken(userId) {
-//   let payload = { userId: userId };
-//   let refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN);
-//   Refresh_Tokens.push(refreshToken);
-//   if (refreshToken == null) return console.log(401);
-//   if (!Refresh_Tokens.includes(refreshToken)) return res.sendStatus(403);
+const sendEmail = (id)=> {
+  const userId = id;
+  let otp = crypto.randomInt(100000, 999999);
+  let expirationOTP = Date.now() + 5 * 60 * 1000;
 
-//   jwt.verify(refreshToken, process.env.REFRESH_TOKEN, (err, user) => {
-//     if (err) return console.log(403);
-//     const accessToken = generateToken({ userId: user.id });
-//     client.query("update userinfo set token= $1 where id =$2", [
-//       accessToken,
-//       userId,
-//     ]);
-//     console.log({ accessToken: accessToken });
-//     // signin();
-//   });
-// }
+  if (!userId) {
+    // res.status(400).send();
+    console.log("User ID is missing from the query string");
+    return;
+  }
+  client.query(
+    "select email from userinfo where id= $1",
+    [userId],
+    (err, result) => {
+      if (err) {
+        console.log(err);
+        console.log("Error retrieving email address");
+      } else {
+        const ToMail = result.rows[0].email;
+        otpCache[ToMail] = { otp, expirationOTP };
+        // console.log(ToMail);
+        const mailOptions = {
+          from: "magidexter@gmail.com",
+          to: ToMail,
+          subject: "verification code from magi ✔",
+          text: `This is the OTP : ${otp}`,
+          // html: '<b>This is the testing mail</b>'
+        };
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.log(error);
+            console.log("Error sending email");
+          } else {
+            console.log("Message sent: %s", info.messageId);
+          }
+        });
+      }
+    }
+  );
+};
 
 
 
 
-export {sendOTPSMS, generateToken, signin, otpCacheSMS}
+export {sendOTPSMS, generateToken, signin,sendEmail, otpCacheSMS, otpCache}

@@ -1,7 +1,5 @@
 import client from "../../Utils/database.js";
-import transporter from "../../Utils/nodemailer.js";
-import {otpCacheSMS, sendOTPSMS} from  '../../Utils/helper.js';
-import crypto from 'crypto';
+import {otpCacheSMS, sendOTPSMS, sendEmail, otpCache} from  '../../Utils/helper.js';
 
 let updateProfile1 =(req,res)=>{
     let {firstName, lastName, gender} = req.body;
@@ -25,7 +23,10 @@ let updateProfileEmail = async(req,res)=>{
     let email = req.body.email;
     let {userId} = req.user;
     try{
-          await client.query('update userinfo set email =$1 where id =$2', [email, userId]);
+      const existingEmail = await client.query('select email from userinfo where id=$1', [userId]);
+      if(existingEmail.rows[0].email == email){
+        res.status(200).send('Email Exist');
+      }else{
             sendEmail(userId);
             const result = await client.query('select mobilenum from userinfo where id=$1',[userId]);
             console.log(result.rows[0].mobilenum);
@@ -36,6 +37,7 @@ let updateProfileEmail = async(req,res)=>{
                 message: "Updated successfully",
             })
           }
+        }
           catch(err){
             res.status(403).send({
               status: false,
@@ -43,49 +45,7 @@ let updateProfileEmail = async(req,res)=>{
           })
         }
       }
-           
-let otpCache = {};
 
-const sendEmail = (id)=> {
-  const userId = id;
-  let otp = crypto.randomInt(100000, 999999);
-  let expirationOTP = Date.now() + 5 * 60 * 1000;
-
-  if (!userId) {
-    // res.status(400).send();
-    console.log("User ID is missing from the query string");
-    return;
-  }
-  client.query(
-    "select email from userinfo where id= $1",
-    [userId],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        console.log("Error retrieving email address");
-      } else {
-        const ToMail = result.rows[0].email;
-        otpCache[ToMail] = { otp, expirationOTP };
-        // console.log(ToMail);
-        const mailOptions = {
-          from: "magidexter@gmail.com",
-          to: ToMail,
-          subject: "verification code from magi ✔",
-          text: `This is the OTP : ${otp}`,
-          // html: '<b>This is the testing mail</b>'
-        };
-        transporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.log(error);
-            console.log("Error sending email");
-          } else {
-            console.log("Message sent: %s", info.messageId);
-          }
-        });
-      }
-    }
-  );
-};
 
 const verifyOTPEMAILSMS = async(req,res)=>{
   let {userId} = req.user;
@@ -102,7 +62,8 @@ const verifyOTPEMAILSMS = async(req,res)=>{
   console.log(savedEmailOTP.otp == emailOTP);
   console.log(savedSMSOTP.otp == SMSOTP);
   if (savedSMSOTP.otp == SMSOTP && savedEmailOTP.otp == emailOTP) {
-    res.status(200).send({status:true ,message: "OTP verified successfully"});
+    await client.query('update userinfo set email =$1 where id =$2', [email, userId]);
+    res.status(200).send({status:true ,message: "Email Updated successfully"});
   }else{
     res.status(401).send({ status: false, message: "Invalid OTP" });
   }
@@ -119,4 +80,44 @@ const verifyOtp = (req, res) => {
     }
   };
 
-export {updateProfile1, updateProfileEmail, verifyOtp, verifyOTPEMAILSMS};
+// otpCachenewNumber= {}
+const updateProfileMobileNum = async (req,res)=>{
+  const newMobilenum = req.body.mobilenum;
+  let {userId} = req.user
+  try{
+    const existingMobileNum = await client.query('select mobilenum from userinfo where id=$1', [userId]);
+    const oldMobilenum = existingMobileNum.rows[0].mobilenum
+    if(newMobilenum == oldMobilenum){
+      res.status(200).send({status:false ,message: "Mobile number Exist"});
+    }else{
+      sendOTPSMS(newMobilenum);
+      sendOTPSMS(oldMobilenum);
+      res.status(200).send({status:true ,message: "Mobile number updated successfully"});
+    }
+  }catch(err){
+    res.status(500).send({status:false ,message: "Mobile number update failed"});
+  }
+}
+
+
+const verifyOldNewMobileOTP = async(req,res)=>{
+  const newOTP = req.body.newOTP;
+  const oldOTP = req.body.oldOTP;
+  let {userId} = req.user;
+  let Newmobilenum = req.body.mobilenum;
+  let result = await client.query('select mobilenum from userinfo where id=$1', [userId]);
+  const Oldmobilenum = result.rows[0].mobilenum;
+  const savedOldOTP  = otpCacheSMS[Oldmobilenum].otp;
+  const savedNewOTP = otpCacheSMS[Newmobilenum].otp;
+  if(savedOldOTP == oldOTP && savedNewOTP == newOTP){
+    await client.query('update userinfo set mobilenum =$1 where id =$2', [Newmobilenum, userId]);
+    res.status(200).send({status: true, message:"Mobile updated successfully"});
+  }else{
+    res.status(403).send({status: false, message:"OTP not verified"});
+
+  }
+
+  
+}
+
+export {updateProfile1, updateProfileEmail, verifyOtp, verifyOTPEMAILSMS, updateProfileMobileNum, verifyOldNewMobileOTP};
