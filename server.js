@@ -1,9 +1,10 @@
 import express from 'express';
-import cookieParser from 'cookie-parser';
 import client from "./Utils/database.js";
 import userRoutes from './Routes/UserRoutes/userRoutes.js'
+import productRoutes from './Routes/ProductRoutes/productRoutes.js'
+import fileupload  from 'express-fileupload'; 
+
 let app = express();
-// app.use(cors())
 
 client.connect((err)=>{
     if(err){
@@ -13,7 +14,10 @@ client.connect((err)=>{
     }
 });
 app.use(express.json());
+app.use(fileupload({useTempFiles: true}))
 app.use('/', userRoutes);
+app.use('/', productRoutes);
+
 // app.use(errorhandler)
 
 app.listen(3000, ()=>{

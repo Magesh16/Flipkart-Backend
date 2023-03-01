@@ -3,6 +3,7 @@ import refToken from '../../middlewares/authorization.js';
 import {getUser, register, login, verifyOTPSMS} from '../../Controllers/UserController/controllers.js';
 import {updateProfile1, updateProfileEmail, updateProfileMobileNum, verifyOtp, verifyOTPEMAILSMS,verifyOldNewMobileOTP} from '../../Controllers/UserController/profileControllers.js'
 import { deleteAddress, getAddress, postAddress, updateAddress } from '../../Controllers/UserController/addressController.js';
+import { pan_info, upload } from '../../Controllers/UserController/panCardController.js';
 let routes = express.Router();
 
  
@@ -23,5 +24,7 @@ routes.get('/getAddress',refToken, getAddress);
 routes.post('/postAddress',refToken, postAddress );
 routes.put('/updateAddress/:id', refToken, updateAddress);
 routes.delete('/deleteAddress/:id', refToken, deleteAddress);
+
+routes.post('/pan_card', upload.single('image_url'), refToken, pan_info);
 
 export default routes;
