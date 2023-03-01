@@ -113,7 +113,7 @@ const verifyOldNewMobileOTP = async(req,res)=>{
     res.status(403).send({status: false, message:"OTP not verified"});
   }
 
-  
 }
 
 export {updateProfile1, updateProfileEmail, verifyOtp, verifyOTPEMAILSMS, updateProfileMobileNum, verifyOldNewMobileOTP};
+
