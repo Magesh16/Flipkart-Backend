@@ -1,5 +1,6 @@
 import express from 'express';
 import { getCategory, postCategory } from '../../Controllers/ProductsController/category.js';
+import { getProducts, postProducts } from '../../Controllers/ProductsController/productItem.js';
 import { getSegment, postSegment,getCategorySubcategory } from '../../Controllers/ProductsController/segment.js';
 import { getSubcategory, postSubcategory } from '../../Controllers/ProductsController/subCategory.js';
 // import refToken from '../../middlewares/authorization.js';
@@ -17,6 +18,8 @@ routes.post('/postCategory', postCategory);
 routes.get('/getSubcategory', getSubcategory);
 routes.post('/postSubcategory', postSubcategory);
 
+routes.get('/getProduct/:id', getProducts);
+routes.post('/postProducts', postProducts)
 
 
 export default routes;
