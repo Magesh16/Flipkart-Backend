@@ -1,4 +1,5 @@
 import client from "../../Utils/database.js";
+import {calculatePrice} from '../../Utils/productHelper.js';
 
 let getCategory = async(req,res)=>{
     try{
@@ -6,6 +7,18 @@ let getCategory = async(req,res)=>{
         res.status(200).send(result.rows);
     }catch(err){
         res.status(403).send({error:err})
+    }
+}
+
+let getAllSubcategoryProducts = async(req,res)=>{
+    try{
+        let result = await client.query('select p.image_url[1],p.name,p.highlights,p.mrp, p.discount from product_items as p left join category_type on p.category_type_id = category_type.id');
+        res.status(200).send(result.rows.map(ele=>{
+            ele.price = calculatePrice(ele.mrp,parseInt(ele.discount))
+            return ele;
+        }));
+    }catch(err){
+        res.status(403).send({error: err.message});
     }
 }
 
@@ -19,4 +32,4 @@ let postCategory = async(req,res)=>{
     }
 }
 
-export {getCategory, postCategory};
+export {getCategory, postCategory,getAllSubcategoryProducts};
