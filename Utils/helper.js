@@ -78,13 +78,12 @@ const sendEmail = (id)=> {
       } else {
         const ToMail = result.rows[0].email;
         otpCache[ToMail] = { otp, expirationOTP };
-        // console.log(ToMail);
+        console.log(ToMail);
         const mailOptions = {
           from: "magidexter@gmail.com",
           to: ToMail,
           subject: "verification code from magi ✔",
           text: `This is the OTP : ${otp}`,
-          // html: '<b>This is the testing mail</b>'
         };
         transporter.sendMail(mailOptions, (error, info) => {
           if (error) {

@@ -10,16 +10,14 @@ let getSubcategory = async(req,res)=>{
     }
 }
 
-
-
 let getSubcategoryProducts = async(req,res)=>{
     let id =req.params.id;
     try{
         let result = await client.query(`select p.image_url[1],p.name,p.highlights,p.mrp, p.discount from product_items as p left join category_type on p.category_type_id = category_type.id where category_type_id =${id}`);
-        const mrp = result.rows[0].mrp;
-        const discount = parseInt(result.rows[0].discount)
-        let price = calculatePrice(mrp,discount);
-        res.status(200).send({message: result.rows,price});
+        res.status(200).send(result.rows.map(ele =>{
+            ele.price = calculatePrice(ele.mrp,parseInt(ele.discount));
+            return ele;
+        }))
     }catch(err){
         res.status(403).send({error:err.message})
     }

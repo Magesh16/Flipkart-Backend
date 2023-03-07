@@ -1,9 +1,17 @@
 import client from '../../Utils/database.js'
+import { calculatePrice } from '../../Utils/productHelper.js';
+
 let getProducts =async (req,res)=>{
     try{
         const id = req.params.id;
         const result = await client.query(`select * from product_items where id=${id}`,);
-        res.status(200).send(result.rows);
+        const reviewCount = await client.query(`select count(comment)as commentCount, count(rating) as ratingCount from reviews where product_items_id = ${id}`);
+        res.status(200).send(result.rows.map(ele=>{
+            ele.price = calculatePrice(ele.mrp,parseInt(ele.discount))
+            ele.ratingCount = reviewCount.rows[0].ratingcount
+            ele.commentCount = reviewCount.rows[0].commentcount;
+            return ele;
+        }));
         }catch(err){
             res.status(403).send({error:err.message});
         }
