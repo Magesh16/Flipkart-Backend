@@ -1,10 +1,11 @@
 import express from 'express';
-import { getCartDetails, postCartDetails, updateCartDetails, removeCartDetails,saveForLater } from '../../Controllers/ProductsController/cartItem.js';
+import { getCartDetails, postCartDetails, updateCartDetails, removeCartDetails,saveForLater, moveToCart } from '../../Controllers/ProductsController/cartItem.js';
 import { getCategory, postCategory,getAllSubcategoryProducts } from '../../Controllers/ProductsController/category.js';
 import { getProducts, postProducts } from '../../Controllers/ProductsController/productItem.js';
 import { getReviews, postReviews } from '../../Controllers/ProductsController/reviewItem.js';
 import { getSegment, postSegment,getCategorySubcategory } from '../../Controllers/ProductsController/segment.js';
 import { getSubcategory, postSubcategory ,getSubcategoryProducts} from '../../Controllers/ProductsController/subCategory.js';
+import { getWishList, postWishList, removeWishList } from '../../Controllers/ProductsController/wishlistItem.js';
 import refToken from '../../middlewares/authorization.js';
 
 
@@ -33,8 +34,12 @@ routes.get('/getCartDetails',refToken, getCartDetails)
 routes.post('/postCartDetails', refToken, postCartDetails)
 routes.patch('/updateCartDetails/:id',refToken,updateCartDetails);
 routes.delete('/removeCartDetails/:id',refToken,removeCartDetails);
-routes.post('/saveForLater',refToken,saveForLater)
+routes.put('/saveForLater/:id',refToken,saveForLater)
+routes.put('/moveTocart/:id', refToken, moveToCart)
 
+routes.get('/getWishList', refToken, getWishList)
+routes.post('/postWishList/:id',refToken, postWishList)
+routes.delete('/removeWishList/:id',refToken,removeWishList);
 
 
 export default routes;

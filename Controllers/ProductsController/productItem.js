@@ -5,9 +5,10 @@ let getProducts =async (req,res)=>{
     try{
         const id = req.params.id;
         const result = await client.query(`select * from product_items where id=${id}`,);
-        const reviewCount = await client.query(`select count(comment)as commentCount, count(rating) as ratingCount from reviews where product_items_id = ${id}`);
+        const reviewCount = await client.query(`select round(avg(rating)::numeric, 1) as avg_rating, count(comment)as commentCount, count(rating) as ratingCount from reviews where product_items_id = ${id}`);
         res.status(200).send(result.rows.map(ele=>{
             ele.price = calculatePrice(ele.mrp,parseInt(ele.discount))
+            ele.avg_rating = reviewCount.rows[0].avg_rating
             ele.ratingCount = reviewCount.rows[0].ratingcount
             ele.commentCount = reviewCount.rows[0].commentcount;
             return ele;

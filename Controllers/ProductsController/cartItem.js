@@ -1,5 +1,5 @@
 import client from '../../Utils/database.js';
-import {calculatePrice, getSaveForLater} from '../../Utils/productHelper.js'
+import {calculatePrice} from '../../Utils/productHelper.js'
 
 let getCartDetails = async(req,res)=>{
     try{
@@ -33,9 +33,6 @@ let updateCartDetails = async(req,res)=>{
     try{
         const {userId}  = req.user;
         const product_items_id = req.params.id;
-        const quantity = req.body.quantity;
-        const getResult = req.result;
-        console.log(getResult);
         const results =await client.query(`select p.name, p.image_url[1], p.mrp, p.discount, p.f_assured from product_items as p where id =${product_items_id}`);
         // console.log(results.rows);
         const mrp =  results.rows[0].mrp;
@@ -51,19 +48,30 @@ let updateCartDetails = async(req,res)=>{
         res.status(403).send({error: err.message});
     }
 }
+
 let saveForLater = async(req,res)=>{
     try{
-        const {userId}  = req.user;
-        const cart_id =req.body.cart_id;
-        await client.query(`insert into savedCart_products(cart_id, user_id) values ($1,$2)`, [cart_id, userId])
-        let result = await getSaveForLater(userId);
-        console.log(result);
-        res.status(200).send(result.rows);
+        let {userId}= req.user;
+        let product_items_id =req.params.id;
+        await client.query(`update product_cart set status =$1 where user_id =$2 and product_items_id=$3`, [true, userId, product_items_id]);
+        let result = await client.query(`select * from product_cart where status=${true}`)
+        res.status(200).send({message: 'Save for later', data:result.rows,status: true});
     }catch(err){
         res.status(403).send({error: err.message});
     }
 }
 
+let moveToCart = async(req,res)=>{
+    try{
+        let {userId}= req.user;
+        let product_items_id =req.params.id;
+        await client.query(`update product_cart set status =$1 where user_id =$2 and product_items_id=$3`, [false, userId, product_items_id]);
+        let result = await client.query(`select * from product_cart where status=${false}`)
+        res.status(200).send({message:'Moved to cart',data:result.rows, status:true});
+    }catch(err){
+        res.status(403).send({error: err.message, status:false});
+    }
+}
 
 let removeCartDetails = async(req,res)=>{
     try{
@@ -76,4 +84,4 @@ let removeCartDetails = async(req,res)=>{
     }
 }
 
-export {getCartDetails, postCartDetails,updateCartDetails, removeCartDetails, saveForLater};
+export {getCartDetails, postCartDetails,updateCartDetails, removeCartDetails, saveForLater, moveToCart};
