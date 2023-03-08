@@ -3,8 +3,6 @@ import client from '../../Utils/database.js';
 let getWishList = async(req,res)=>{
     try{
         let {userId}=req.user;
-        // let rating  = await client.query(`select avg(rating), count(rating) from reviews where product_items_id in (select product_items_id from wishlist where user_id= ${userId}) group by product_items_id`);
-        // console.log(rating.rows);
         let result =await client.query(`select pi.name, pi.mrp, pi.discount, (pi.mrp - (pi.mrp * (pi.discount::integer)) / 100) as price, pi.f_assured, pi.image_url[1], round(avg(rating)::numeric, 1) as average_rating, count(r.rating) as rating_count 
         from product_items pi
         inner join wishlist w on w.product_items_id = pi.id 

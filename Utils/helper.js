@@ -64,7 +64,6 @@ const sendEmail = (id)=> {
   let expirationOTP = Date.now() + 5 * 60 * 1000;
 
   if (!userId) {
-    // res.status(400).send();
     console.log("User ID is missing from the query string");
     return;
   }
