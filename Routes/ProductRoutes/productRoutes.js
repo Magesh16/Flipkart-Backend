@@ -3,7 +3,7 @@ import { getCartDetails, postCartDetails, updateCartDetails, removeCartDetails,s
 import { getCategory, postCategory,getAllSubcategoryProducts } from '../../Controllers/ProductsController/category.js';
 import { paymentItem, success,failure } from '../../Controllers/ProductsController/paymentItems.js';
 import { getProducts, postProducts } from '../../Controllers/ProductsController/productItem.js';
-import { getReviews, postReviews } from '../../Controllers/ProductsController/reviewItem.js';
+import { getReviews, postReviews, updateDislikeCount, updateLikeCount } from '../../Controllers/ProductsController/reviewItem.js';
 import { getSegment, postSegment,getCategorySubcategory } from '../../Controllers/ProductsController/segment.js';
 import { getSubcategory, postSubcategory ,getSubcategoryProducts} from '../../Controllers/ProductsController/subCategory.js';
 import { getWishList, postWishList, removeWishList } from '../../Controllers/ProductsController/wishlistItem.js';
@@ -30,6 +30,8 @@ routes.post('/postProducts', postProducts)
 
 routes.get('/getReviews/:product_items_id', getReviews);
 routes.post('/postReviews',refToken, postReviews);
+routes.put('/updateLikeCount/:id',updateLikeCount)
+routes.put('/updateDislikeCount/:id',updateDislikeCount)
 
 routes.get('/getCartDetails',refToken, getCartDetails)
 routes.post('/postCartDetails', refToken, postCartDetails)

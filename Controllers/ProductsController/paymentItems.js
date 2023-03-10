@@ -30,7 +30,7 @@ let success = async (req,res)=>{
     const receipturi = charges.receipt_url;
     const userId  = req.query.userid;
     const productId = req.query.productid;
-    await client.query('insert into payment (orders_id, user_id, status,receipt_url, transaction_id) values($1,$2,$3,$4,$5)',[productId,userId,true,receipturi,transactionid]);
+    await client.query('insert into payment (product_items_id, user_id, status,receipt_url, transaction_id) values($1,$2,$3,$4,$5)',[productId,userId,true,receipturi,transactionid]);
     res.status(200).send('Payment Success');
   }catch(err){
     res.status(403).send({error:err.message})

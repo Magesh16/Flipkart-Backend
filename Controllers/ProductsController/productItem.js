@@ -1,6 +1,7 @@
 import client from '../../Utils/database.js'
 import { calculatePrice } from '../../Utils/productHelper.js';
 
+
 let getProducts =async (req,res)=>{
     try{
         const id = req.params.id;

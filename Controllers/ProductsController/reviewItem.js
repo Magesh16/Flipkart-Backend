@@ -3,7 +3,6 @@ import client from '../../Utils/database.js';
 let getReviews =async(req,res)=>{
     try{
         let product_items_id = req.params.product_items_id;
-        console.log(product_items_id);
         let result =await client.query(`select rating, comment from reviews where product_items_id = ${product_items_id}`);
         res.status(200).send(result.rows);
     }catch(err){
@@ -27,6 +26,24 @@ let postReviews = async(req,res)=>{
     }
 }
 
+let updateLikeCount = async(req,res)=>{
+    try{
+        let id = req.params.id;
+        await client.query('update reviews set likes_count = likes_count+1 where id =$1',[id]);
+        res.status(200).send("Like added to the product");
+    }catch(err){
+        res.status(403).send({error: err.message});
+    }
+}
+let updateDislikeCount = async(req,res)=>{
+    try{
+        let id = req.params.id;
+        await client.query('update reviews set dislikes_count = dislikes_count+1 where id =$1',[id]);
+        res.status(200).send("Dislike added to the product");
+    }catch(err){
+        res.status(403).send({error: err.message});
+    }
+}
 
 
-export {getReviews,postReviews}
+export {getReviews,postReviews,updateLikeCount,updateDislikeCount}
