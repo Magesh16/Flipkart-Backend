@@ -1,6 +1,7 @@
 import express from 'express';
 import { getCartDetails, postCartDetails, updateCartDetails, removeCartDetails,saveForLater, moveToCart } from '../../Controllers/ProductsController/cartItem.js';
 import { getCategory, postCategory,getAllSubcategoryProducts } from '../../Controllers/ProductsController/category.js';
+import { paymentItem, success,failure } from '../../Controllers/ProductsController/paymentItems.js';
 import { getProducts, postProducts } from '../../Controllers/ProductsController/productItem.js';
 import { getReviews, postReviews } from '../../Controllers/ProductsController/reviewItem.js';
 import { getSegment, postSegment,getCategorySubcategory } from '../../Controllers/ProductsController/segment.js';
@@ -40,6 +41,11 @@ routes.put('/moveTocart/:id', refToken, moveToCart)
 routes.get('/getWishList', refToken, getWishList)
 routes.post('/postWishList/:id',refToken, postWishList)
 routes.delete('/removeWishList/:id',refToken,removeWishList);
+
+routes.get('/paymentItem',refToken, paymentItem);
+routes.get('/success',success)
+routes.get('/failure',failure)
+// routes.put('/updateStatus',refToken, updateStatus)
 
 
 export default routes;
