@@ -2,20 +2,11 @@ import client from "../../Utils/database.js";
 import dotenv from "dotenv";
 dotenv.config();
 import stripePackage from 'stripe';
+import { generateOrderId } from "./productOrders.js";
 const stripe = stripePackage(process.env.STRIPE_SECRET_KEY);
 
-// let updateStatus =async(req,res)=>{
-//   try{
-//   let {userId} = req.user;
-//   await client.query('update product_cart set status =$1 where user_id=$2',[true,userId]);
-//   res.status(200).send("Payment successfull");
-//   }catch(err){
-//     res.status(403).send({error: err.message})
-//   }
-// }
 let success = async (req,res)=>{
   try{
-    console.log("hello");
     const sessionid  = req.query.sessionid
     const session  = await stripe.checkout.sessions.retrieve(sessionid)
     if(!session) return next(new ErrorHandler("session object not found",500))
@@ -29,8 +20,9 @@ let success = async (req,res)=>{
     const transactionid  = charges.balance_transaction;
     const receipturi = charges.receipt_url;
     const userId  = req.query.userid;
-    const productId = req.query.productid;
-    await client.query('insert into payment (product_items_id, user_id, status,receipt_url, transaction_id) values($1,$2,$3,$4,$5)',[productId,userId,true,receipturi,transactionid]);
+    const orderId = req.query.orderid;
+    await client.query('insert into payment (order_id, user_id, status,receipt_url, transaction_id) values($1,$2,$3,$4,$5)',[orderId,userId,true,receipturi,transactionid]);
+    await client.query('update product_orders set status=$1 where order_id =$2',[true, orderId]);
     res.status(200).send('Payment Success');
   }catch(err){
     res.status(403).send({error:err.message})
@@ -39,7 +31,6 @@ let success = async (req,res)=>{
 
 let failure = async (req,res)=>{
   try{
-    console.log("hello");
     const sessionid  = req.query.sessionid
     const session  = await stripe.checkout.sessions.retrieve(sessionid)
     if(!session) return next(new ErrorHandler("session object not found",500))
@@ -53,7 +44,7 @@ let failure = async (req,res)=>{
     const transactionid  = charges.balance_transaction;
     const receipturi = charges.receipt_url;
     const userId  = req.query.userid;
-    const productId = req.query.productid;
+    const orderId = req.query.orderid;
     await client.query('insert into payment (product_items_id, user_id, status,receipt_url, transaction_id) values($1,$2,$3,$4,$5)',[productId,userId,false,receipturi,transactionid]);
     res.status(403).send('Payment Failure');
   }catch(err){
@@ -61,12 +52,22 @@ let failure = async (req,res)=>{
   }
 }
 
-
 let paymentItem = async (req, res) => { 
     const {userId} = req.user;
     // const { product } = req.body;
     const result = await client.query(`select pi.id, pi.name, (pi.mrp - (pi.mrp * (pi.discount::integer)) / 100) as price, pc.quantity from product_items pi inner join product_cart pc on pi.id = pc.product_items_id where user_id =${userId}`);
-    console.log(result.rows);
+    if(result.rows == 0){
+      res.status(200).send('Product Not found in the cart');
+    }
+    // const cartItems  = await client.query(`select product_items_id from cart_order where user_id = ${userId}`) 
+    const orderId  = generateOrderId(userId)
+    await client.query(`insert into product_orders(status,user_id,quantity,order_id) values($1,$2,$3,$4)`,[false,userId,result.rowCount,orderId])
+
+    for(let i =0;i<result.rowCount;i++){
+      await client.query(`insert into cart_order(order_id,product_items_id,quantity)values($1,$2,$3)`,[orderId,result.rows[i]['id'],result.rows[i]['quantity'] ])
+    }
+    await client.query('delete from product_cart where user_id=$1', [userId]);
+    // console.log(result.rows);
     const session = await stripe.checkout.sessions.create({ 
       payment_method_types: ["card"], 
         line_items: result.rows.map((ele)=>{
@@ -82,11 +83,10 @@ let paymentItem = async (req, res) => {
   }),
       
       mode: "payment", 
-      success_url: `http://localhost:3000/success/?sessionid={CHECKOUT_SESSION_ID}&userid= ${userId}&productid=${result.rows[0].id} `,
-      cancel_url: `http://localhost:3000/cancel/?sessionid={CHECKOUT_SESSION_ID}&userid= ${userId}&productid=${result.rows[0].id} `, 
+      success_url: `http://localhost:3000/success/?sessionid={CHECKOUT_SESSION_ID}&userid= ${userId}&orderid=${orderId} `,
+      cancel_url: `http://localhost:3000/cancel/?sessionid={CHECKOUT_SESSION_ID}&userid= ${userId}&orderid=${orderId} `, 
     }); 
     res.send({id: session.id,url: session.url }); 
 
   }
-
   export {paymentItem, success, failure};
