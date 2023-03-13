@@ -2,13 +2,13 @@ import client from "../../Utils/database.js";
 import dotenv from "dotenv";
 dotenv.config();
 import stripePackage from 'stripe';
-import { generateOrderId } from "./productOrders.js";
+import { generateOrderId } from "../../Utils/productHelper.js";
 const stripe = stripePackage(process.env.STRIPE_SECRET_KEY);
 
 let success = async (req,res)=>{
   try{
-    const sessionid  = req.query.sessionid
-    const session  = await stripe.checkout.sessions.retrieve(sessionid)
+    const sessionid  = req.query.sessionid;
+    const session  = await stripe.checkout.sessions.retrieve(sessionid);
     if(!session) return next(new ErrorHandler("session object not found",500))
     const payment  = await stripe.paymentIntents.retrieve(session.payment_intent)
      
@@ -54,13 +54,11 @@ let failure = async (req,res)=>{
 
 let paymentItem = async (req, res) => { 
     const {userId} = req.user;
-    // const { product } = req.body;
     const result = await client.query(`select pi.id, pi.name, (pi.mrp - (pi.mrp * (pi.discount::integer)) / 100) as price, pc.quantity from product_items pi inner join product_cart pc on pi.id = pc.product_items_id where user_id =${userId}`);
     if(result.rows == 0){
       res.status(200).send('Product Not found in the cart');
     }
-    // const cartItems  = await client.query(`select product_items_id from cart_order where user_id = ${userId}`) 
-    const orderId  = generateOrderId(userId)
+    const orderId  = generateOrderId(userId);
     await client.query(`insert into product_orders(status,user_id,quantity,order_id) values($1,$2,$3,$4)`,[false,userId,result.rowCount,orderId])
 
     for(let i =0;i<result.rowCount;i++){
@@ -81,8 +79,7 @@ let paymentItem = async (req, res) => {
       quantity:ele.quantity
   })
   }),
-      
-      mode: "payment", 
+      mode: "payment",
       success_url: `http://localhost:3000/success/?sessionid={CHECKOUT_SESSION_ID}&userid= ${userId}&orderid=${orderId} `,
       cancel_url: `http://localhost:3000/cancel/?sessionid={CHECKOUT_SESSION_ID}&userid= ${userId}&orderid=${orderId} `, 
     }); 

@@ -7,6 +7,7 @@ import { getReviews, postReviews, updateDislikeCount, updateLikeCount } from '..
 import { getSegment, postSegment,getCategorySubcategory } from '../../Controllers/ProductsController/segment.js';
 import { getSubcategory, postSubcategory ,getSubcategoryProducts} from '../../Controllers/ProductsController/subCategory.js';
 import { getWishList, postWishList, removeWishList } from '../../Controllers/ProductsController/wishlistItem.js';
+import {getOrders} from '../../Controllers/ProductsController/productOrders.js'
 import refToken from '../../middlewares/authorization.js';
 
 
@@ -49,5 +50,6 @@ routes.get('/success',success)
 routes.get('/failure',failure)
 // routes.put('/updateStatus',refToken, updateStatus)
 
+routes.get('/getOrders',refToken, getOrders)
 
 export default routes;

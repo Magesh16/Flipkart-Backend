@@ -6,4 +6,8 @@ async function getSaveForLater(id){
     return await client.query(`select * from product_cart where user_id =${id}`);
 }
 
-export {calculatePrice, getSaveForLater};
+const generateOrderId = (userId) =>{
+    return new Date().toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '')+ userId;
+}
+
+export {calculatePrice, getSaveForLater, generateOrderId};
