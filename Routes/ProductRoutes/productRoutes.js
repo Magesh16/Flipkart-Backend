@@ -10,6 +10,9 @@ import { getWishList, postWishList, removeWishList } from '../../Controllers/Pro
 import {getOrders} from '../../Controllers/ProductsController/productOrders.js'
 import refToken from '../../middlewares/authorization.js';
 import { getDeliveryStatus, updateDeliveryStatus } from '../../Controllers/ProductsController/shipment.js';
+import { getGiftCards} from '../../Controllers/GiftCardController.js/giftCards.js';
+import { getCardCategory } from '../../Controllers/GiftCardController.js/giftCardCategory.js';
+import { getGiftCardItems } from '../../Controllers/GiftCardController.js/giftCardItem.js';
 
 
 let routes = express.Router();
@@ -55,5 +58,10 @@ routes.get('/getOrders',refToken, getOrders)
 
 routes.get('/getDeliveryStatus/:id',refToken,getDeliveryStatus);
 routes.put('/updateDeliveryStatus',refToken,updateDeliveryStatus);
+
+routes.get('/getGiftCards',getGiftCards);
+routes.get('/getCardCategory/:id',getCardCategory)
+
+routes.get('/getGiftCardItems/:id', getGiftCardItems)
 
 export default routes;
