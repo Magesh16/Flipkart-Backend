@@ -23,7 +23,7 @@ const sendOTPSMS = async (mobilenum) => {
 };
 
 function generateToken(id) {
-    return jwt.sign(id, process.env.ACCESS_TOKEN, { expiresIn: "7d" });
+    return jwt.sign(id, process.env.ACCESS_TOKEN, { expiresIn: "15d" });
   }
 
 async function signin(mobilenum) {

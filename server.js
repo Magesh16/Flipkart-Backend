@@ -2,6 +2,7 @@ import express from 'express';
 import client from "./Utils/database.js";
 import userRoutes from './Routes/UserRoutes/userRoutes.js'
 import productRoutes from './Routes/ProductRoutes/productRoutes.js'
+import giftCardRoutes from './Routes/GiftCardRoutes/giftcardRoutes.js'
 import fileupload  from 'express-fileupload'; 
 
 let app = express();
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(fileupload({useTempFiles: true}))
 app.use('/', userRoutes);
 app.use('/', productRoutes);
+app.use('/',giftCardRoutes);
 
 // app.use(errorhandler)
 
