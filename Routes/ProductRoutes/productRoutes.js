@@ -9,6 +9,7 @@ import { getSubcategory, postSubcategory ,getSubcategoryProducts} from '../../Co
 import { getWishList, postWishList, removeWishList } from '../../Controllers/ProductsController/wishlistItem.js';
 import {getOrders} from '../../Controllers/ProductsController/productOrders.js'
 import refToken from '../../middlewares/authorization.js';
+import { getDeliveryStatus, updateDeliveryStatus } from '../../Controllers/ProductsController/shipment.js';
 
 
 let routes = express.Router();
@@ -51,5 +52,8 @@ routes.get('/failure',failure)
 // routes.put('/updateStatus',refToken, updateStatus)
 
 routes.get('/getOrders',refToken, getOrders)
+
+routes.get('/getDeliveryStatus/:id',refToken,getDeliveryStatus);
+routes.put('/updateDeliveryStatus',refToken,updateDeliveryStatus);
 
 export default routes;

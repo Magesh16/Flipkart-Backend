@@ -5,7 +5,6 @@ import { calculatePrice } from '../../Utils/productHelper.js';
 let getProducts =async (req,res)=>{
     try{
         const id = req.params.id;
-        // const result = await client.query(`select * from product_items where id=${id}`,);
         const result = await client.query(`select * from product_items as p inner join variations as v on v.id = p.variation_id where variation_id=${id}`);
         const reviewCount = await client.query(`select round(avg(rating)::numeric, 1) as avg_rating, count(comment)as commentCount, count(rating) as ratingCount from reviews where product_items_id = ${id}`);
         res.status(200).send(result.rows.map(ele=>{

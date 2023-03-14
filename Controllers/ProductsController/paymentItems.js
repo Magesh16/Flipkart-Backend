@@ -2,7 +2,7 @@ import client from "../../Utils/database.js";
 import dotenv from "dotenv";
 dotenv.config();
 import stripePackage from 'stripe';
-import { generateOrderId } from "../../Utils/productHelper.js";
+import { generateOrderId, generateShipmentId } from "../../Utils/productHelper.js";
 const stripe = stripePackage(process.env.STRIPE_SECRET_KEY);
 
 let success = async (req,res)=>{
@@ -10,8 +10,7 @@ let success = async (req,res)=>{
     const sessionid  = req.query.sessionid;
     const session  = await stripe.checkout.sessions.retrieve(sessionid);
     if(!session) return next(new ErrorHandler("session object not found",500))
-    const payment  = await stripe.paymentIntents.retrieve(session.payment_intent)
-     
+    const payment  = await stripe.paymentIntents.retrieve(session.payment_intent);
     const charges = await stripe.charges.retrieve(
       payment.latest_charge
     );
@@ -23,9 +22,11 @@ let success = async (req,res)=>{
     const orderId = req.query.orderid;
     await client.query('insert into payment (order_id, user_id, status,receipt_url, transaction_id) values($1,$2,$3,$4,$5)',[orderId,userId,true,receipturi,transactionid]);
     await client.query('update product_orders set status=$1 where order_id =$2',[true, orderId]);
+    const shipmentId =generateShipmentId(userId)
+    await client.query('insert into shipment (order_id, user_id, status, tracking_num) values ($1,$2,$3,$4)',[orderId,userId,"In-transit",shipmentId]);
     res.status(200).send('Payment Success');
   }catch(err){
-    res.status(403).send({error:err.message})
+    res.status(403).send({error:err.message});
   }
 }
 
