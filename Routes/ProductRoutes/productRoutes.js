@@ -10,6 +10,7 @@ import { getWishList, postWishList, removeWishList } from '../../Controllers/Pro
 import {getOrders} from '../../Controllers/ProductsController/productOrders.js'
 import refToken from '../../middlewares/authorization.js';
 import { getDeliveryStatus, updateDeliveryStatus } from '../../Controllers/ProductsController/shipment.js';
+import { getCoupons, postCoupons } from '../../Controllers/ProductsController/coupons.js';
 
 let routes = express.Router();
 
@@ -54,6 +55,8 @@ routes.get('/getOrders',refToken, getOrders)
 routes.get('/getDeliveryStatus/:id',refToken,getDeliveryStatus);
 routes.put('/updateDeliveryStatus',refToken,updateDeliveryStatus);
 
+routes.get('/getCoupons',getCoupons)
+routes.post('/postCoupons',postCoupons);
 
 
 
