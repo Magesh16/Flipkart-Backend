@@ -4,8 +4,7 @@ import {calculatePrice} from '../../Utils/productHelper.js'
 let getCartDetails = async(req,res)=>{
     try{
     let {userId}  = req.user;
-    const result = await client.query(`select c.id,p.name, p.image_url[1], p.mrp, p.discount, p.f_assured, c.quantity from product_items as p inner join product_cart as c on p.id = c.product_items_id where user_id = ${userId}`);
-    
+    const result = await client.query(`select c.id,p.name, p.image_url[1], p.mrp, p.discount, p.f_assured ,p.offers,c.quantity from product_items as p inner join product_cart as c on p.id = c.product_items_id where user_id = ${userId}`);
     result.rows.map(ele=>{
         ele.price = calculatePrice(ele.mrp,parseInt(ele.discount));
         return ele;

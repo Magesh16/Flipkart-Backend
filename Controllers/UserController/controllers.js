@@ -59,4 +59,16 @@ const verifyOTPSMS = async (req, res) => {
   }
 };
 
+// const logout = async(req,res)=>{
+//   try{
+//     let {userId} =  req.user;
+//     let authHeader =  req.headers['authorization'].split(' ')[1];
+//     console.log(authHeader);
+//     jwt.sign(userId,authHeader, {expiresIn:'1s'});
+//     res.status(200).send("Logout successfully");
+//   }catch(err){
+//     res.status(403).send({status:false,message:"logout error"});
+//   }
+// }
+
 export { getUser, register, login, verifyOTPSMS };

@@ -13,6 +13,7 @@ routes.get('/getUser',refToken, getUser);
 routes.post('/register', register);
 routes.post('/login',login);
 routes.post('/verifyOTPSMS',verifyOTPSMS )
+// routes.put('/logout',refToken,logout);
 
 routes.put('/updateProfile1',refToken,updateProfile1);
 routes.put('/updateProfileEmail',refToken, updateProfileEmail);
