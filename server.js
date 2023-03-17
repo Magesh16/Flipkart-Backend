@@ -14,8 +14,12 @@ client.connect((err)=>{
         console.log('Connected to database');
     }
 });
+
 app.use(express.json());
 app.use(fileupload({useTempFiles: true}))
+
+
+  
 app.use('/', userRoutes);
 app.use('/', productRoutes);
 app.use('/',giftCardRoutes);
