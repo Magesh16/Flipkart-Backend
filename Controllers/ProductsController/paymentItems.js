@@ -22,8 +22,8 @@ let success = async (req,res)=>{
     const orderId = req.query.orderid;
     await client.query('insert into payment (order_id, user_id, status,receipt_url, transaction_id) values($1,$2,$3,$4,$5)',[orderId,userId,true,receipturi,transactionid]);
     await client.query('update product_orders set status=$1 where order_id =$2',[true, orderId]);
-    const shipmentId =generateShipmentId(userId)
-    await client.query('insert into shipment (order_id, user_id, status, tracking_num) values ($1,$2,$3,$4)',[orderId,userId,"In-transit",shipmentId]);
+    const shipmentId =2244;
+    await client.query('insert into shipment (order_id, user_id, tracking_num) values ($1,$2,$3)',[orderId,userId,shipmentId]);
     res.status(200).send('Payment Success');
   }catch(err){
     res.status(403).send({error:err.message});
