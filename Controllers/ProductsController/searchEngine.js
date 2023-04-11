@@ -59,7 +59,6 @@ const client1 = new Client({ node: 'http://localhost:9200' });
 async function getProducts(){
     const result =await client.query(`select * from product_items`);
     return result.rows;
-    
 }
 async function indexProducts() {
     let products = await getProducts();
