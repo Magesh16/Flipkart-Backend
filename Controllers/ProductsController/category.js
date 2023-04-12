@@ -3,7 +3,7 @@ import {calculatePrice} from '../../Utils/productHelper.js';
 
 let getCategory = async(req,res)=>{
     try{
-        let result = await client.query('select * from category');
+        let result = await client.query('SELECT * from category');
         res.status(200).send(result.rows);
     }catch(err){
         res.status(403).send({error:err})
