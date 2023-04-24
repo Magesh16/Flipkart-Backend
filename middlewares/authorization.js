@@ -5,8 +5,8 @@ let refToken = (req,res,next)=>{
       jwt.verify(token, process.env.ACCESS_TOKEN ,(err,decoded)=>{
           if(err) res.status(401).json({ message: 'Invalid token.' });
           else{
-        req.user = decoded;
-        next();
+            req.user = decoded;
+            next();
           }
       })
     }else{

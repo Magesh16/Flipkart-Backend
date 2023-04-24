@@ -1,17 +1,17 @@
 version: "3.9"
 services:
-  app:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    image: mageshsk16/app:latest
-    depends_on:
-      - db
-    ports:
-      - "4000:3000"
-    volumes:
-      - .:/app
-    command: npm start
+  # app:
+  #   # build:
+  #   #   context: .
+  #   #   dockerfile: Dockerfile
+  #   image: mageshsk16/app:latest
+  #   depends_on:
+  #     - db
+  #   ports:
+  #     - "4000:3000"
+  #   volumes:
+  #     - .:/app
+  #   command: npm start
   db:
     image: postgres
     restart: always

@@ -1,24 +1,22 @@
 import client from "../../Utils/database.js";
 import {otpCacheSMS, sendOTPSMS, sendEmail, otpCache} from  '../../Utils/helper.js';
 
-let updateProfile1 =(req,res)=>{
+let updateProfile1 = async(req,res)=>{
     let {firstName, lastName, gender} = req.body;
     let {userId} = req.user;
-    client.query('update userinfo set firstName =$1, lastName =$2, gender=$3 where id =$4', [firstName, lastName, gender, userId] ,(err)=>{
-        if(!err){
-            res.status(200).send({
-                status: true,
-                message: "Updated successfully",
-            })
-        }else{
-            res.status(403).send({
-                status: false,
-                message: "Not updated",
-            })
-        }
+    try{
+      await client.query('update userinfo set firstName =$1, lastName =$2, gender=$3 where id =$4', [firstName, lastName, gender, userId]);
+          res.status(200).send({
+              status: true,
+              message: "Updated successfully",
+          })
+    }catch(e){
+      res.status(403).send({
+        status: false,
+        message: "Not updated",
     })
+    }
 }
-
 let updateProfileEmail = async(req,res)=>{
     let email = req.body.email;
     let {userId} = req.user;

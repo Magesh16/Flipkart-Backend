@@ -3,12 +3,11 @@ import clientSMS from "./twilio.js";
 import crypto from "crypto";
 import client from "./database.js";
 import transporter from "../Utils/nodemailer.js";
-import { log } from "console";
 
 let otpCacheSMS = {};
 
 const sendOTPSMS = async (mobilenum) => {
-  let otp = crypto.randomInt(10000, 999999);
+  let otp = crypto.randomInt(100000, 999999);
   let expirationOTP = Date.now() + 5 * 60 * 2000;
   const toNumber = mobilenum;
   console.log(toNumber);
@@ -16,7 +15,7 @@ const sendOTPSMS = async (mobilenum) => {
    await clientSMS.messages
     .create({
       body: `Here is the otp for Flipkart login : ${otp}`,
-      from: "+17542223474",
+      from: "+16204041402",
       to: toNumber,
     })
     .then((message) =>
@@ -25,7 +24,7 @@ const sendOTPSMS = async (mobilenum) => {
 };
 
 function generateToken(id) {
-    return jwt.sign(id, process.env.ACCESS_TOKEN);
+    return jwt.sign({userId:id}, process.env.ACCESS_TOKEN);
   }
 
 async function signin(mobilenum){
@@ -34,12 +33,10 @@ async function signin(mobilenum){
       "select token,id from userinfo where mobilenum =$1",
       [mobilenum],
     );
-    console.log(result.rows[0]);
     let token = result.rows[0].token;
     console.log("token"+ token);
     const userId = result.rows[0].id;
     let payload = { userId: userId };
-      console.log(token +" "+userId);
     if (token == null){
       console.log("token null");
       token = generateToken(payload);

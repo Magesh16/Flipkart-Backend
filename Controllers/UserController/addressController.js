@@ -3,6 +3,7 @@ import client from "../../Utils/database.js";
 let getAddress = async(req,res)=>{
     try{
         let {userId}= req.user;
+        console.log(userId);
         let result = await client.query('select * from address where user_id=$1', [userId]);
         if(!result) res.send(200).json({});
         let address = result.rows;

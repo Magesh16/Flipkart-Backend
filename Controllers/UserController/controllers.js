@@ -2,7 +2,6 @@ import client from "../../Utils/database.js";
 import {signin, sendOTPSMS, otpCacheSMS, generateToken} from '../../Utils/helper.js'
 import dotenv from "dotenv";
 
-
 dotenv.config();
 
 let getUser = async (req, res) => {
@@ -19,19 +18,20 @@ let getUser = async (req, res) => {
 let register = async(req, res) => {
   try{
   const mobilenum = req.body.mobilenum;
-  const result = await client.query('select id from userinfo where mobilenum =$1',[mobilenum]);
-    if(result.rows[0].id){
-      return res.status(403).send("Already Registered");
-    }
+  const result = await client.query('select mobilenum from userinfo where mobilenum =$1',[mobilenum]);
+    // if(result.rows[0].id!==null){
+    //   return res.status(403).send("Already Registered");
+    // }
+      await sendOTPSMS(mobilenum);
       await client.query(
         "insert into userinfo (mobilenum) values ($1) returning id",
         [mobilenum]);
       const data  = await client.query('select id from userinfo where mobilenum = $1',[mobilenum]);
       let id = data.rows[0].id;
+      console.log(id);
       let token = generateToken(id);
       await client.query("update userinfo set token=$1 where mobilenum=$2",[token,mobilenum]);
-      sendOTPSMS(mobilenum);
-      res.status(200).send({token});
+      res.status(200).send({status:true,message:"verify the otp"});
   
   }catch(err){
     res.status(500).send(err);  
@@ -43,6 +43,7 @@ let login = async (req, res) => {
   try {
     const mobilenum = req.body.mobilenum;
     const result = await client.query('select id from userinfo where mobilenum =$1',[mobilenum]);
+    console.log(result.rows[0].id);
     if(result.rows[0].id){
       sendOTPSMS(mobilenum);  
       res.status(200).send({status:true,message:"verify the otp"})
@@ -51,7 +52,7 @@ let login = async (req, res) => {
     }
     
   } catch (err) {
-    res.sendStatus(403);
+    res.status(403).send({status:false, message:"Invalid Mobile Number Registered"});
   }
 };
 
@@ -68,17 +69,5 @@ const verifyOTPSMS = async (req, res) => {
     res.status(401).send({ status: false, message: "Invalid OTP" });
   }
 };
-
-// const logout = async(req,res)=>{
-//   try{
-//     let {userId} =  req.user;
-//     let authHeader =  req.headers['authorization'].split(' ')[1];
-//     console.log(authHeader);
-//     jwt.sign(userId,authHeader, {expiresIn:'1s'});
-//     res.status(200).send("Logout successfully");
-//   }catch(err){
-//     res.status(403).send({status:false,message:"logout error"});
-//   }
-// }
 
 export { getUser, register, login, verifyOTPSMS };

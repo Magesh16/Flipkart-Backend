@@ -1,7 +1,9 @@
 import twilio from 'twilio';
+import dotenv from "dotenv";
+dotenv.config();
 const clientSMS = new twilio(
-    "AC73a98fa0f808e36755060b15f72fbfde",
-    "83864c02d56ca31dd1a06a487d9b8fcc"
+    process.env.YOUR_ACCOUNT_SID,
+    process.env.YOUR_AUTH_TOKEN
   );
 
 export default clientSMS;
