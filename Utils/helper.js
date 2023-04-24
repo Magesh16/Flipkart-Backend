@@ -24,7 +24,7 @@ const sendOTPSMS = async (mobilenum) => {
 };
 
 function generateToken(id) {
-    return jwt.sign({userId:id}, process.env.ACCESS_TOKEN);
+    return jwt.sign({userId:id}, process.env.ACCESS_TOKEN, {expiresIn:'30d'});
   }
 
 async function signin(mobilenum){

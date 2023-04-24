@@ -15,7 +15,6 @@ let success = async (req,res)=>{
       payment.latest_charge
     );
     if(!session) return next("paymentIntent object not found");
-    // console.log(payment,sessionid,charges);
     const transactionid  = charges.balance_transaction;
     const receipturi = charges.receipt_url;
     const userId  = req.query.userid;

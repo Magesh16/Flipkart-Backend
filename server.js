@@ -4,8 +4,11 @@ import userRoutes from './Routes/UserRoutes/userRoutes.js'
 import productRoutes from './Routes/ProductRoutes/productRoutes.js'
 import giftCardRoutes from './Routes/GiftCardRoutes/giftcardRoutes.js'
 import fileupload  from 'express-fileupload'; 
+import cookieParser from 'cookie-parser';
+
 
 let app = express();
+
 
 client.connect((err)=>{
     if(err){
@@ -16,7 +19,10 @@ client.connect((err)=>{
 });
 
 app.use(express.json());
-app.use(fileupload({useTempFiles: true}))
+app.use(cookieParser()) ;
+app.use(fileupload({useTempFiles: true})) ; 
+
+
 
 
   

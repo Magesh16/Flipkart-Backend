@@ -1,0 +1,6 @@
+1. Authentication
+    Register -> OTP -> Token generated
+    Login -> OTP -> Token generated
+
+2. Profile
+    

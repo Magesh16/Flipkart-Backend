@@ -18,25 +18,28 @@ let getUser = async (req, res) => {
 let register = async(req, res) => {
   try{
   const mobilenum = req.body.mobilenum;
-  const result = await client.query('select mobilenum from userinfo where mobilenum =$1',[mobilenum]);
-    // if(result.rows[0].id!==null){
-    //   return res.status(403).send("Already Registered");
-    // }
+  const result = await client.query('select mobilenum,verify,token from userinfo where mobilenum =$1',[mobilenum]);
+  let varify = result.rows[0]?.verify;
+    if(varify){
+      return res.status(403).send("Already Registered");
+    }
+    if((!varify) && result.rows[0]?.token){
+      await sendOTPSMS(mobilenum);
+      res.status(200).cookie('token',result.rows[0].token, { maxAge: 60*60*24*20, httpOnly: true }).send({status:true,message:"verify the otp"});
+    }
       await sendOTPSMS(mobilenum);
       await client.query(
         "insert into userinfo (mobilenum) values ($1) returning id",
         [mobilenum]);
       const data  = await client.query('select id from userinfo where mobilenum = $1',[mobilenum]);
       let id = data.rows[0].id;
-      console.log(id);
       let token = generateToken(id);
       await client.query("update userinfo set token=$1 where mobilenum=$2",[token,mobilenum]);
-      res.status(200).send({status:true,message:"verify the otp"});
-  
+      res.status(200).cookie('token',token, { maxAge: 60*60*24*20, httpOnly: true }).send({status:true,message:"verify the otp"});
   }catch(err){
+    console.log(err)
     res.status(500).send(err);  
   }
-
 };
 
 let login = async (req, res) => {
@@ -46,7 +49,7 @@ let login = async (req, res) => {
     console.log(result.rows[0].id);
     if(result.rows[0].id){
       sendOTPSMS(mobilenum);  
-      res.status(200).send({status:true,message:"verify the otp"})
+      return res.status(200).send({status:true,message:"verify the otp"})
     }else{
       res.status(403).send({status:false, message:"Please Register"});
     }

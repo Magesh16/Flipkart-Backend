@@ -12,7 +12,7 @@ import refToken from '../../middlewares/authorization.js';
 import { getDeliveryStatus, updateDeliveryStatus } from '../../Controllers/ProductsController/shipment.js';
 import { getCoupons, postCoupons } from '../../Controllers/ProductsController/coupons.js';
 import { getShippedDetailsHelpCenter, getViewMore } from '../../Controllers/ProductsController/helpCenter.js';  
-
+import phraseSearch from '../../Controllers/ProductsController/searchEngine.js';
 let routes = express.Router();
 
 routes.get('/getSegment/:id', getSegment);
@@ -48,8 +48,8 @@ routes.post('/postWishList/:id',refToken, postWishList)
 routes.delete('/removeWishList/:id',refToken,removeWishList);
 
 routes.get('/paymentItem',refToken, paymentItem);
-routes.get('/success',success)
-routes.get('/failure',failure)
+routes.post('/success',success)
+routes.post('/failure',failure)
 
 routes.get('/getOrders',refToken, getOrders)
 
@@ -62,7 +62,7 @@ routes.post('/postCoupons',postCoupons);
 routes.get('/getShippedDetailsHelpCenter',refToken, getShippedDetailsHelpCenter);
 routes.get('/getViewMore',getViewMore);
 
-// routes.get('/products/search/',phraseSearch);
+routes.get('/products/search/',phraseSearch);
 
 
 export default routes;
