@@ -5,12 +5,19 @@ import productRoutes from './routes/productRoutes/productRoutes.js'
 import giftCardRoutes from './routes/giftCardRoutes/giftcardRoutes.js'
 import fileupload  from 'express-fileupload'; 
 import cors from 'cors';
+import rateLimit from 'express-rate-limit'; 
 
 let app = express();
 app.use(cors({
     origin:'http://localhost:3000'
 }))
 
+const limiter  = rateLimit({
+    windowMs: 15*60*1000,
+    max:100
+})
+
+app.use(limiter);
 
 client.connect((err)=>{
     if(err){
