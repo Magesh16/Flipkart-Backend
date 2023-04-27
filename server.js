@@ -1,8 +1,8 @@
 import express from 'express';
-import client from "./Utils/database.js";
-import userRoutes from './Routes/UserRoutes/userRoutes.js'
-import productRoutes from './Routes/ProductRoutes/productRoutes.js'
-import giftCardRoutes from './Routes/GiftCardRoutes/giftcardRoutes.js'
+import client from "./utils/database.js";
+import userRoutes from './routes/userRoutes/userRoutes.js'
+import productRoutes from './routes/productRoutes/productRoutes.js'
+import giftCardRoutes from './routes/giftCardRoutes/giftcardRoutes.js'
 import fileupload  from 'express-fileupload'; 
 import cors from 'cors';
 
