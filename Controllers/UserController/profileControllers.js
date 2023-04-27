@@ -1,6 +1,16 @@
 import client from "../../Utils/database.js";
 import {otpCacheSMS, sendOTPSMS, sendEmail, otpCache} from  '../../Utils/helper.js';
 
+let getProfile = async(req,res)=>{
+  try{
+    let {userId} = req.user;
+    let result  =await client.query("select firstName, lastName, gender, email, mobilenum from userinfo where id=$1", [userId]);
+    return res.status(200).json(result.rows[0]);
+  }catch(err){
+    res.status(403).send({error: err.message});
+  }
+}
+
 let updateProfile1 = async(req,res)=>{
     let {firstName, lastName, gender} = req.body;
     let {userId} = req.user;
@@ -32,7 +42,7 @@ let updateProfileEmail = async(req,res)=>{
             sendOTPSMS(mobilenum);
             res.status(200).send({
                 status: true,
-                message: "Updated successfully",
+                message: "OTP sent to mobile and Email",
             })
           }
         }
@@ -47,19 +57,18 @@ let updateProfileEmail = async(req,res)=>{
 
 const verifyOTPEMAILSMS = async(req,res)=>{
   let {userId} = req.user;
+  const newEmail = req.body.newEmail;
+  const emailOTP = req.body.emailOTP;
+  const SMSOTP = req.body.SMSOTP;
+
   const result = await client.query('select email, mobilenum from userinfo where id=$1',[userId]);
   const email = result.rows[0].email;
   const mobilenum = result.rows[0].mobilenum;
-  const emailOTP = req.body.emailOTP;
-  const SMSOTP = req.body.SMSOTP;
-  // console.log(emailOTP, SMSOTP);
+  console.log(email);
   const savedEmailOTP = otpCache[email];
   const savedSMSOTP = otpCacheSMS[mobilenum];
-  // console.log(savedEmailOTP.otp, savedSMSOTP.otp);
-  // console.log(savedEmailOTP.otp == emailOTP);
-  // console.log(savedSMSOTP.otp == SMSOTP);
   if (savedSMSOTP.otp == SMSOTP && savedEmailOTP.otp == emailOTP) {
-    await client.query('update userinfo set email =$1 where id =$2', [email, userId]);
+    await client.query('update userinfo set email =$1 where id =$2', [newEmail, userId]);
     res.status(200).send({status:true ,message: "Email Updated successfully"});
   }else{
     res.status(401).send({ status: false, message: "Invalid OTP" });
@@ -88,7 +97,7 @@ const updateProfileMobileNum = async (req,res)=>{
     }else{
       sendOTPSMS(newMobilenum);
       sendOTPSMS(oldMobilenum);
-      res.status(200).send({status:true ,message: "Mobile number updated successfully"});
+      res.status(200).send({status:true ,message: "OTP sent to old and new mobile numbers"});
     }
   }catch(err){
     res.status(500).send({status:false ,message: "Mobile number update failed"});
@@ -96,16 +105,16 @@ const updateProfileMobileNum = async (req,res)=>{
 }
 
 const verifyOldNewMobileOTP = async(req,res)=>{
+  let newMobilenum = req.body.mobilenum;
   const newOTP = req.body.newOTP;
   const oldOTP = req.body.oldOTP;
   let {userId} = req.user;
-  let Newmobilenum = req.body.mobilenum;
   let result = await client.query('select mobilenum from userinfo where id=$1', [userId]);
-  const Oldmobilenum = result.rows[0].mobilenum;
-  const savedOldOTP  = otpCacheSMS[Oldmobilenum].otp;
-  const savedNewOTP = otpCacheSMS[Newmobilenum].otp;
+  const oldMobilenum = result.rows[0].mobilenum;
+  const savedOldOTP  = otpCacheSMS[oldMobilenum].otp;
+  const savedNewOTP = otpCacheSMS[newMobilenum].otp;
   if(savedOldOTP == oldOTP && savedNewOTP == newOTP){
-    await client.query('update userinfo set mobilenum =$1 where id =$2', [Newmobilenum, userId]);
+    await client.query('update userinfo set mobilenum =$1 where id =$2', [newMobilenum, userId]);
     res.status(200).send({status: true, message:"Mobile updated successfully"});
   }else{
     res.status(403).send({status: false, message:"OTP not verified"});
@@ -113,5 +122,5 @@ const verifyOldNewMobileOTP = async(req,res)=>{
 
 }
 
-export {updateProfile1, updateProfileEmail, verifyOtp, verifyOTPEMAILSMS, updateProfileMobileNum, verifyOldNewMobileOTP};
+export {getProfile,updateProfile1, updateProfileEmail, verifyOtp, verifyOTPEMAILSMS, updateProfileMobileNum, verifyOldNewMobileOTP};
 

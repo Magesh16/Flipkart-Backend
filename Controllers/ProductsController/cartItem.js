@@ -33,14 +33,12 @@ let updateCartDetails = async(req,res)=>{
         const {userId}  = req.user;
         const product_items_id = req.params.id;
         const results =await client.query(`select p.name, p.image_url[1], p.mrp, p.discount, p.f_assured from product_items as p where id =${product_items_id}`);
-        // console.log(results.rows);
         const mrp =  results.rows[0].mrp;
         const discount =  parseInt(results.rows[0].discount);
         const new_price = calculatePrice(mrp,discount);
         await client.query('update product_cart set quantity= quantity+ $1 where user_id=$2 and product_items_id=$3', [quantity, userId, product_items_id]);
        let quan = await client.query(`select quantity from product_cart where user_id=$1 and product_items_id=$2`, [userId, product_items_id])
         const updated_price = new_price*quan.rows[0].quantity;
-        // console.log(updated_price);
         res.status(200).send({data: results.rows,quantity: quan.rows[0].quantity, updated_price: updated_price}); 
         
     }catch(err){

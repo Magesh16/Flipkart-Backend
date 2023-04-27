@@ -3,7 +3,6 @@ import client from "../../Utils/database.js";
 let getAddress = async(req,res)=>{
     try{
         let {userId}= req.user;
-        console.log(userId);
         let result = await client.query('select * from address where user_id=$1', [userId]);
         if(!result) res.send(200).json({});
         let address = result.rows;
@@ -18,7 +17,7 @@ let postAddress = async (req,res)=>{
         let {userId} = req.user;
         const {locality, city, state, landmark, alternate_phno, address_type, isDefault} = req.body;
         await client.query('insert into address (user_id, locality, city, state, landmark, alternate_phno, address_type, isDefault) values($1,$2,$3,$4,$5,$6,$7,$8)',[userId,locality, city, state, landmark, alternate_phno, address_type, isDefault]);
-        res.status(200).send('Address Inserted Successfully');
+        res.status(200).send({status:true,message:'Address Inserted Successfully'});
     }
     catch(err){
         res.status(500).send({error:err.message});

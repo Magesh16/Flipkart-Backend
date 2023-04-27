@@ -35,7 +35,8 @@ let register = async(req, res) => {
       let id = data.rows[0].id;
       let token = generateToken(id);
       await client.query("update userinfo set token=$1 where mobilenum=$2",[token,mobilenum]);
-      res.status(200).cookie('token',token, { maxAge: 60*60*24*20, httpOnly: true }).send({status:true,message:"verify the otp"});
+      res.status(200).send({status:true,message:"verify the otp"})
+      // res.status(200).cookie('token',token, { maxAge: 60*60*24*20, httpOnly: true }).send({status:true,message:"verify the otp"});
   }catch(err){
     console.log(err)
     res.status(500).send(err);  

@@ -15,7 +15,6 @@ const isValidPanNumber = (pan_number)=>{
     }
     const file = req.body.image_url;               
     try {
-      // Upload file to Cloudinary
       const {userId}  = req.user;
       const check = await client.query('select id from panCard where user_id = $1', [userId]);
         if(check.rows.length>0){

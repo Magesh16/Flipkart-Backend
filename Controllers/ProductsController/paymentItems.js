@@ -25,7 +25,7 @@ let success = async (req,res)=>{
     await client.query('insert into shipment (order_id, user_id, tracking_num) values ($1,$2,$3)',[orderId,userId,shipmentId]);
     res.status(200).send('Payment Success');
   }catch(err){
-    res.status(403).send({error:err.message});
+    res.status(403).send({status:false ,error:err.message});
   }
 }
 
@@ -40,7 +40,6 @@ let failure = async (req,res)=>{
       payment.latest_charge
     );
     if(!session) return next("paymentIntent object not found");
-    // console.log(payment,sessionid,charges);
     const transactionid  = charges.balance_transaction;
     const receipturi = charges.receipt_url;
     const userId  = req.query.userid;
@@ -48,7 +47,7 @@ let failure = async (req,res)=>{
     await client.query('insert into payment (product_items_id, user_id, status,receipt_url, transaction_id) values($1,$2,$3,$4,$5)',[productId,userId,false,receipturi,transactionid]);
     res.status(403).send('Payment Failure');
   }catch(err){
-    res.status(403).send({error:err.message})
+    res.status(403).send({status:false ,error:err.message})
   }
 }
 
@@ -65,7 +64,6 @@ let paymentItem = async (req, res) => {
       await client.query(`insert into cart_order(order_id,product_items_id,quantity)values($1,$2,$3)`,[orderId,result.rows[i]['id'],result.rows[i]['quantity'] ])
     }
     await client.query('delete from product_cart where user_id=$1', [userId]);
-    // console.log(result.rows);
     const session = await stripe.checkout.sessions.create({ 
       payment_method_types: ["card"], 
         line_items: result.rows.map((ele)=>{

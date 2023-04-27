@@ -4,10 +4,12 @@ import userRoutes from './Routes/UserRoutes/userRoutes.js'
 import productRoutes from './Routes/ProductRoutes/productRoutes.js'
 import giftCardRoutes from './Routes/GiftCardRoutes/giftcardRoutes.js'
 import fileupload  from 'express-fileupload'; 
-import cookieParser from 'cookie-parser';
-
+import cors from 'cors';
 
 let app = express();
+app.use(cors({
+    origin:'http://localhost:3000'
+}))
 
 
 client.connect((err)=>{
@@ -19,18 +21,13 @@ client.connect((err)=>{
 });
 
 app.use(express.json());
-app.use(cookieParser()) ;
 app.use(fileupload({useTempFiles: true})) ; 
-
-
-
 
   
 app.use('/', userRoutes);
 app.use('/', productRoutes);
 app.use('/',giftCardRoutes);
 
-// app.use(errorhandler)
 
 app.listen(3000, ()=>{
     console.log('Server started on port 3000');

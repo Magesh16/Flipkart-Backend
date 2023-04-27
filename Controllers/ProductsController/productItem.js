@@ -15,7 +15,7 @@ let getProducts =async (req,res)=>{
             return ele;
         }));
         }catch(err){
-            res.status(403).send({error:err.message});
+            res.status(403).send({status:false ,error:err.message});
         }
 }
 
@@ -24,9 +24,9 @@ let postProducts = async (req,res)=>{
         let {category_type_id,image_url, name,mrp,discount, colour, f_assured,qty_in_stock, avail_offer, delivery_pincode, highlights, description, specification} =req.body;
         await client.query('insert into product_items (category_type_id,image_url, name, mrp,discount, f_assured, qty_in_stock, avail_offer, delivery_pincode, highlights, description, specification) values ($1,$2,$3,$4,$5,$6,$7,$8, $9,$10,$11,$12,$13)'
         ,[category_type_id,image_url, name, mrp,discount, colour, f_assured,qty_in_stock, avail_offer, delivery_pincode, highlights, description, specification]);
-        res.status(200).send("Inserted Successfully")
+        res.status(200).send({status:true ,message:"Inserted Successfully"})
     }catch(err){
-        res.status(403).send({error:err.message});
+        res.status(403).send({status:false ,error:err.message});
     }
 }
 
