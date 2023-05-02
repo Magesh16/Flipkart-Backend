@@ -2,7 +2,7 @@ import express from 'express';
 import refToken from '../../middlewares/authorization.js';
 import {getUser, register, login, verifyOTPSMS} from '../../controllers/userController/controllers.js';
 import {getProfile,updateProfile1, updateProfileEmail, updateProfileMobileNum, verifyOtp, verifyOTPEMAILSMS,verifyOldNewMobileOTP} from '../../controllers/userController/profileControllers.js'
-import { deleteAddress, getAddress, postAddress, updateAddress } from '../../controllers/userController/addressController.js';
+import { deleteAddress,getAddressById, getAddress, postAddress, updateAddress } from '../../controllers/userController/addressController.js';
 import { pan_info } from '../../controllers/userController/panCardController.js';
 import  {upload} from '../../utils/cloudinary.js'
 let routes = express.Router();
@@ -23,6 +23,7 @@ routes.post('/verifyOTPEMAILSMS',refToken, verifyOTPEMAILSMS);
 routes.post('/verifyOldNewMobileOTP',refToken,verifyOldNewMobileOTP);
 
 routes.get('/getAddress',refToken, getAddress);
+routes.get('/getAddress/:id',refToken,getAddressById );
 routes.post('/postAddress',refToken, postAddress );
 routes.put('/updateAddress/:id', refToken, updateAddress);
 routes.delete('/deleteAddress/:id', refToken, deleteAddress);

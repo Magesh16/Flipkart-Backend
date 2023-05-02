@@ -12,11 +12,22 @@ let getAddress = async(req,res)=>{
     }
 }
 
+let getAddressById = async (req,res)=>{
+    try{
+        let {userId} = req.user;
+        const id = req.params.id;
+        let result = await client.query('select name, mobilenum, pincode,locality, address, city, state, landmark, alternate_phno, address_type from address where id = $1 and user_id=$2',[id,userId]);
+        res.status(200).send({status: true, data: result.rows[0]});
+    }catch(err){
+        res.status(403).send({status:false, error: err.message});
+    }
+}
+
 let postAddress = async (req,res)=>{
     try{
         let {userId} = req.user;
-        const {locality, city, state, landmark, alternate_phno, address_type, isDefault} = req.body;
-        await client.query('insert into address (user_id, locality, city, state, landmark, alternate_phno, address_type, isDefault) values($1,$2,$3,$4,$5,$6,$7,$8)',[userId,locality, city, state, landmark, alternate_phno, address_type, isDefault]);
+        const {address,name,mobilenum, pincode, locality, city, state, landmark, alternate_phno, address_type, isDefault} = req.body;
+        await client.query('insert into address (user_id,name,mobilenum, address,pincode, locality, city, state, landmark, alternate_phno, address_type, isDefault) values($1,$2,$3,$4,$5,$6,$7,$8, $9,$10,$11,$12)',[userId,name,mobilenum, address,pincode,locality, city, state, landmark, alternate_phno, address_type, isDefault]);
         res.status(200).send({status:true,message:'Address Inserted Successfully'});
     }
     catch(err){
@@ -28,12 +39,11 @@ let updateAddress = async(req,res)=>{
     try{
         const id = req.params.id;
         let {userId} = req.user;
-        const {locality, city, state, landmark, alternate_phno, address_type, isDefault} = req.body;
-        // let id = await client.query('select id from address where user_id =$1', [userId]);
-        await client.query('update address set locality =$1, city =$2, state =$3, landmark =$4, alternate_phno =$5, address_type =$6, isDefault =$7 where id=$8 and user_id=$9',[locality, city, state, landmark, alternate_phno, address_type, isDefault, id, userId]);
-        res.status(200).send('Address Updated Successfully');
+        const {name,mobilenum, address, pincode, locality, city, state, landmark, alternate_phno, address_type, isDefault} = req.body;
+        await client.query('update address set locality =$1, city =$2, state =$3, landmark =$4, alternate_phno =$5, address_type =$6, isDefault =$7, address=$8, pincode=$9, name=$10, mobilenum=$11 where id=$12 and user_id=$13',[locality, city, state, landmark, alternate_phno, address_type, isDefault,address,pincode, name,mobilenum,id, userId]);
+        res.status(200).send({status:true ,message:'Address Updated Successfully'});
     }catch(err){
-        res.status(500).send({error:err.message});
+        res.status(500).send({status: false,error:err.message});
     }
 }
 
@@ -48,4 +58,4 @@ let deleteAddress = async(req,res)=>{
     }
 }
 
-export {getAddress, postAddress, updateAddress,deleteAddress};
+export {getAddress, postAddress, updateAddress,deleteAddress,getAddressById};
