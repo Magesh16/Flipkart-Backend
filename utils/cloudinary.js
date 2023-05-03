@@ -10,10 +10,10 @@ cloudinary.config({
   });
 const storage = multer.diskStorage({
     destination : (req,file,cb)=>{
-        cb(null, '');
+        cb(null, './images');
     },
     filename : (req,file,cb)=>{
-        cb(null, new Date().now()+ '-'+ file.originalname)
+        cb(null, file.originalname)
     }
 })
 
@@ -27,9 +27,9 @@ const fileFilter = (req, file,cb)=>{
   const upload = multer({
     storage: storage,
     limits: {
-      fileSize: 2 * 1024 * 1024,
+      fileSize: 10 * 1024 * 1024,
     },
     fileFilter: fileFilter
 })
 
-export {storage, upload, fileFilter};
+export {cloudinary,storage, upload, fileFilter};

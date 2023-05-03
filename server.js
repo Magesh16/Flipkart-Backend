@@ -28,7 +28,7 @@ client.connect((err)=>{
 });
 
 app.use(express.json());
-app.use(fileupload({useTempFiles: true})) ; 
+// app.use(fileupload({useTempFiles: true})) ; 
 
   
 app.use('/', userRoutes);

@@ -28,6 +28,6 @@ routes.post('/postAddress',refToken, postAddress );
 routes.put('/updateAddress/:id', refToken, updateAddress);
 routes.delete('/deleteAddress/:id', refToken, deleteAddress);
 
-routes.post('/pan_card', upload.single('image_url'), refToken, pan_info);
+routes.post('/pan_card',upload.single('image_url'), refToken, pan_info);
 
 export default routes;
