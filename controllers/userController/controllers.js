@@ -21,11 +21,11 @@ let register = async(req, res) => {
   const result = await client.query('select mobilenum,verify,token from userinfo where mobilenum =$1',[mobilenum]);
   let varify = result.rows[0]?.verify;
     if(varify){
-      return res.status(403).send("Already Registered");
+      return res.status(200).send({status:false, message:"Already Registered"});
     }
     if((!varify) && result.rows[0]?.token){
       await sendOTPSMS(mobilenum);
-      res.status(200).cookie('token',result.rows[0].token, { maxAge: 60*60*24*20, httpOnly: true }).send({status:true,message:"verify the otp"});
+      return res.status(200).cookie('token',result.rows[0].token, { maxAge: 60*60*24*20, httpOnly: true }).send({status:true,message:"verify the otp"});
     }
       await sendOTPSMS(mobilenum);
       await client.query(
@@ -39,7 +39,7 @@ let register = async(req, res) => {
       // res.status(200).cookie('token',token, { maxAge: 60*60*24*20, httpOnly: true }).send({status:true,message:"verify the otp"});
   }catch(err){
     console.log(err)
-    res.status(500).send(err);  
+    res.status(500).send(err.message);  
   }
 };
 
