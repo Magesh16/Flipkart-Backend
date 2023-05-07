@@ -36,7 +36,7 @@ let updateProfileEmail = async(req,res)=>{
       if(existingEmail.rows[0].email == email){
         res.status(200).send('Email Exist');
       }else{
-            sendEmail(userId);
+            sendEmail(userId,email);
             const result = await client.query('select mobilenum from userinfo where id=$1',[userId]);
             console.log(result.rows[0].mobilenum);
             const mobilenum = result.rows[0].mobilenum;
@@ -63,10 +63,10 @@ const verifyOTPEMAILSMS = async(req,res)=>{
   const SMSOTP = req.body.SMSOTP;
 
   const result = await client.query('select email, mobilenum from userinfo where id=$1',[userId]);
-  const email = result.rows[0].email;
+  // const email = result.rows[0].email;
   const mobilenum = result.rows[0].mobilenum;
-  console.log(email);
-  const savedEmailOTP = otpCache[email];
+  console.log(newEmail);
+  const savedEmailOTP = otpCache[newEmail];
   const savedSMSOTP = otpCacheSMS[mobilenum];
   if (savedSMSOTP.otp == SMSOTP && savedEmailOTP.otp == emailOTP) {
     await client.query('update userinfo set email =$1 where id =$2', [newEmail, userId]);
@@ -88,7 +88,7 @@ const verifyOtp = (req, res) => {
   };
 
 const updateProfileMobileNum = async (req,res)=>{
-  const newMobilenum = req.body.mobilenum;
+  const newMobilenum = req.body.newMobilenum;
   let {userId} = req.user
   try{
     const existingMobileNum = await client.query('select mobilenum from userinfo where id=$1', [userId]);
@@ -106,7 +106,7 @@ const updateProfileMobileNum = async (req,res)=>{
 }
 
 const verifyOldNewMobileOTP = async(req,res)=>{
-  let newMobilenum = req.body.mobilenum;
+  let newMobilenum = req.body.newMobilenum;
   const newOTP = req.body.newOTP;
   const oldOTP = req.body.oldOTP;
   let {userId} = req.user;

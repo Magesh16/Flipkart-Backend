@@ -64,7 +64,7 @@ async function signin(mobilenum){
            
 let otpCache = {};
 
-const sendEmail = (id)=> {
+const sendEmail = (id, email)=> {
   const userId = id;
   let otp = crypto.randomInt(100000, 999999);
   let expirationOTP = Date.now() + 5 * 60 * 1000;
@@ -81,9 +81,10 @@ const sendEmail = (id)=> {
         console.log(err);
         console.log("Error retrieving email address");
       } else {
-        const ToMail = result.rows[0].email;
+        // const ToMail = result.rows[0].email;
+        const ToMail = email;
         otpCache[ToMail] = { otp, expirationOTP };
-        console.log(ToMail);
+        console.log("To mail"+email);
         const mailOptions = {
           from: "magidexter@gmail.com",
           to: ToMail,
