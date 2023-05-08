@@ -56,7 +56,7 @@ routes.get('/getOrders',refToken, getOrders)
 routes.get('/getDeliveryStatus/:id',refToken,getDeliveryStatus);
 routes.put('/updateDeliveryStatus',refToken,updateDeliveryStatus);
 
-routes.get('/getCoupons',getCoupons)
+routes.get('/getCoupons',getCoupons);
 routes.post('/postCoupons',postCoupons);
 
 routes.get('/getShippedDetailsHelpCenter',refToken, getShippedDetailsHelpCenter);

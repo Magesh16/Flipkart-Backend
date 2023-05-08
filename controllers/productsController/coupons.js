@@ -2,9 +2,9 @@ import client from '../../utils/database.js';
 
 let getCoupons = async(req,res)=>{
     try{
-        let result =await client.query(`SELECT pi.id, pi.name, (pi.mrp - (pi.mrp * (pi.discount::integer)) / 100) as price
+        let result =await client.query(`SELECT distinct pi.id, pi.name, (pi.mrp - (pi.mrp * (pi.discount::integer)) / 100) as price, c.discount_percentage, c.min_price
         FROM product_items pi
-        INNER JOIN coupons c ON c.min_price <= (pi.mrp - (pi.mrp * (pi.discount::integer)) / 100)
+        inner JOIN coupons c ON c.min_price > (pi.mrp - (pi.mrp * (pi.discount::integer)) / 100)
         `);
         
         res.status(200).send(result.rows);
