@@ -18,7 +18,7 @@ const isValidPanNumber = (pan_number)=>{
     try {
       const {userId}  = req.user;
       const check = await client.query('select id from panCard where user_id = $1', [userId]);
-        if(check.rows.length>0){
+        if(check.rows.length>0){                                                                                                                                        
             return res.status(400).send({message: 'Pan Card already exists'});
         }
       const result = await cloudinary.uploader.upload(req.file.path, {
