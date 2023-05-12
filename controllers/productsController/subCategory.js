@@ -13,11 +13,11 @@ let getSubcategory = async (req, res) => {
 let getSubcategoryProducts = async (req, res) => {
   let id = req.params.id;
   try {
-    let result =
-      await client.query(`select p.id, p.image_url[1],p.name,p.highlights,p.mrp, p.discount,p.f_assured, c.name  as category, v.value as brand from 
+    let result = await client.query(`select p.id, p.image_url[1],p.name,p.highlights,p.mrp, p.discount,p.f_assured, c.name  as category, v.value as brand, r.rating from 
             product_items as p 
             left join category_type as c on p.category_type_id = c.id
             left join variations as v on v.product_items_id = p.id
+            left join reviews as r on r.product_items_id = p.id
             where category_type_id =${id}`);
     res.status(200).send(
       result.rows.map((ele) => {
