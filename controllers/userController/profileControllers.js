@@ -1,12 +1,21 @@
 import client from "../../utils/database.js";
 import {otpCacheSMS, sendOTPSMS, sendEmail, otpCache} from  '../../utils/helper.js';
 
+let getName = async(req,res)=>{
+  try{
+    let {userId} = req.user;
+    let result = await client.query(`select firstName, lastName from userinfo where id =${userId}`);
+    res.status(200).send({status: true, message: result.rows[0]})
+  }catch(err){
+    res.status(403).send({status:false,error:err});
+  }
+}
 
 let getProfile = async(req,res)=>{
   try{
     let {userId} = req.user;
     let result  =await client.query("select firstName, lastName, gender, email, mobilenum from userinfo where id=$1", [userId]);
-    return res.status(200).json(result.rows[0]);
+    return res.status(200).send({status: true, message: result.rows[0]});
   }catch(err){
     res.status(403).send({error: err.message});
   }
@@ -122,5 +131,5 @@ const verifyOldNewMobileOTP = async(req,res)=>{
   }
 }
 
-export {getProfile,updateProfile1, updateProfileEmail, verifyOtp, verifyOTPEMAILSMS, updateProfileMobileNum, verifyOldNewMobileOTP};
+export {getName,getProfile,updateProfile1, updateProfileEmail, verifyOtp, verifyOTPEMAILSMS, updateProfileMobileNum, verifyOldNewMobileOTP};
 

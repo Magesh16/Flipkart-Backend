@@ -2,7 +2,6 @@ import {Client} from '@elastic/elasticsearch';
 import client from '../../utils/database.js';
 const elasticClient = new Client({ node: 'http://localhost:9200' });
 
-
 const pushToElasticSearch = async(req,res)=>{
     try{
         const { rows: products } = await client.query('SELECT * FROM product_items');
@@ -29,14 +28,16 @@ const searchProducts = async (name) => {
         body: {
           query: {
             multi_match: {
-                query : name,
+                query : name.toLowerCase(),
                 fuzziness: 'AUTO',
-                fields: ["name"]
+                type: "bool_prefix",
+                fields: ["name"],
+                minimum_should_match: '2<75%'
             }
           }
         }
       });
-    //   console.log(res)
+      console.log(res)
       return res.hits.hits.map(hit => hit._source);
     } catch (error) {
       return { error: error.message };
@@ -46,6 +47,7 @@ const searchProducts = async (name) => {
         const name = req.query.name;
             try {
             const results  = await searchProducts(name);
+            console.log(results);
             res.status(200).send(results);
             } catch (error) {
             res.status(500).send({ error: error.message });
