@@ -12,7 +12,7 @@ import refToken from '../../middlewares/authorization.js';
 import { getDeliveryStatus, updateDeliveryStatus } from '../../controllers/productsController/shipment.js';
 import { getCoupons, postCoupons } from '../../controllers/productsController/coupons.js';
 import { getShippedDetailsHelpCenter, getViewMore } from '../../controllers/productsController/helpCenter.js';  
-// import phraseSearch from '../../Controllers/ProductsController/searchEngine.js';
+import {pushToElasticSearch, search} from '../../controllers/productsController/searchEngine.js';
 let routes = express.Router();
 
 routes.get('/getSegment/:id', getSegment);
@@ -62,7 +62,8 @@ routes.post('/postCoupons',postCoupons);
 routes.get('/getShippedDetailsHelpCenter',refToken, getShippedDetailsHelpCenter);
 routes.get('/getViewMore',getViewMore);
 
-// routes.get('/products/search/',phraseSearch);
+routes.get('/search',search);
+routes.post('/postElasticSearch',pushToElasticSearch)
 
 
 export default routes;

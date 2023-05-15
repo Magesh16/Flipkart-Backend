@@ -1,92 +1,56 @@
-// import {Client} from '@elastic/elasticsearch';
-// import client from '../../Utils/database.js';
-// const client1 = new Client({ node: 'http://localhost:3000' });
+import {Client} from '@elastic/elasticsearch';
+import client from '../../utils/database.js';
+const elasticClient = new Client({ node: 'http://localhost:9200' });
 
-// // const phraseSearch = async (_index, _type, phrase) => {
-// //   const hits = [];
 
-// //   // only string values are searchable
-// //   const searchResult = await client
-// //     .search({
-// //       index: _index,
-// //       type: _type,
-// //       body: {
-// //         query: {
-// //           multi_match: {
-// //             fields: [
-// //               'name',
-// //               'lastname',
-// //               'gender',
-// //               'email',
-// //               'city',
-// //               'state',
-// //               'address',
-// //             ],
-// //             query: phrase,
-// //             type: 'phrase_prefix',
-// //             //lenient: true
-// //           },
-// //         },
-// //         highlight: {
-// //           fields: {
-// //             firstname: {},
-// //             lastname: {},
-// //             gender: {},
-// //             email: {},
-// //             city: {},
-// //             state: {},
-// //             address: {},
-// //           },
-// //         },
-// //       },
-// //     })
-// //     .catch((e) => console.log('errr', e));
-// //   if (
-// //     searchResult &&
-// //     searchResult.body &&
-// //     searchResult.body.hits &&
-// //     searchResult.body.hits.hits &&
-// //     searchResult.body.hits.hits.length > 0
-// //   ) {
-// //     hits.push(...searchResult.body.hits.hits);
-// //   }
+const pushToElasticSearch = async(req,res)=>{
+    try{
+        const { rows: products } = await client.query('SELECT * FROM product_items');
+        await Promise.all(products.map(async (product) => {
+            await elasticClient.create({
+                index: "products",
+                id: product.id,
+                document: {
+                    id: product.id,
+                    name: product.name
+                }
+            })
+        }))
+        res.json({ message: 'Data pushed to Elasticsearch'});
+        }catch(err){
+            res.status(500).json({ err: err.message });
+        }
+}
 
-// //   return {
-// //     hitsCount: hits.length,
-// //     hits,
-// //   };
-// // };
-// async function getProducts(){
-//     const result =await client.query(`select * from product_items`);
-//     return result.rows;
-// }
-// async function indexProducts() {
-//     let products = await getProducts();
-    
-//     for (const product of products) {
-//       await client1.index({
-//         index: 'products',
-//         id: product.id,
-//         body: product,
-//       });
+const searchProducts = async (name) => {
+    try {
+      const res = await elasticClient.search({
+        index: 'products',
+        body: {
+          query: {
+            multi_match: {
+                query : name,
+                fuzziness: 'AUTO',
+                fields: ["name"]
+            }
+          }
+        }
+      });
+    //   console.log(res)
+      return res.hits.hits.map(hit => hit._source);
+    } catch (error) {
+      return { error: error.message };
+    }
+  };
+    let search = async(req,res)=>{
+        const name = req.query.name;
+            try {
+            const results  = await searchProducts(name);
+            res.status(200).send(results);
+            } catch (error) {
+            res.status(500).send({ error: error.message });
+            }
+    } 
 
-//     }
-//   }
-//   indexProducts();
 
-//  let phraseSearch= async (req, res) => {
-//     const searchTerm = req.body.name;
-//     const body = await client1.search({
-//     index: 'products',
-//       body: {
-//         query: {
-//           match: { name: searchTerm }
-//         }
-//       }
-//     });
-//     console.log(body);
-//     const products = body.hits.hits.map(hit => hit._source);
-//     res.status(200).send(products);
-//   };
-
-// export default phraseSearch;
+export {pushToElasticSearch, search};
