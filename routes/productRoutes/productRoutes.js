@@ -12,7 +12,7 @@ import refToken from '../../middlewares/authorization.js';
 import { getDeliveryStatus, updateDeliveryStatus } from '../../controllers/productsController/shipment.js';
 import { getCoupons, postCoupons } from '../../controllers/productsController/coupons.js';
 import { getShippedDetailsHelpCenter, getViewMore } from '../../controllers/productsController/helpCenter.js';  
-import {pushToElasticSearch, search} from '../../controllers/productsController/searchEngine.js';
+import {getAllProducts, getFlipkartAssured, getRating, pushToElasticSearch, searchName} from '../../controllers/productsController/searchEngine.js';
 let routes = express.Router();
 
 routes.get('/getSegment/:id', getSegment);
@@ -62,7 +62,10 @@ routes.post('/postCoupons',postCoupons);
 routes.get('/getShippedDetailsHelpCenter',refToken, getShippedDetailsHelpCenter);
 routes.get('/getViewMore',getViewMore);
 
-routes.get('/search',search);
+routes.get('/search',searchName);
+routes.get('/alldata',getAllProducts);
+routes.get('/getRating/:val',getRating)
+routes.get('/getFlipkartAssured/:val',getFlipkartAssured)
 routes.post('/postElasticSearch',pushToElasticSearch)
 
 
