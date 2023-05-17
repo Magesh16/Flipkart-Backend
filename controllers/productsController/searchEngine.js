@@ -124,14 +124,18 @@ const searchProducts = async (name) => {
         body: {
           _source: {include: ['id','name','f_assured','image_url','mrp','discount','brand']},
           query: {
-            bool:{
-              filter: {
-                term: {
-                  rating: val
+            bool: {
+              must: [
+                {
+                  range: {
+                    rating: {
+                      gte: val
+                    }
+                  }
                 }
-              }
+              ]
+            }
           }
-        }
         }
       });
       let data = response.hits.hits.map(item => item._source)
