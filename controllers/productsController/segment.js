@@ -19,7 +19,7 @@ let getCategorySubcategory = async(req,res)=>{
     ) subcat ON c.name = subcat.name
     GROUP BY s.name;
     `);
-    console.log(result.rows[0]);
+    // console.log(result.rows[0]);
     res.status(200).send(result.rows);
     }catch(err){
         res.status(403).send({error: err.message})
@@ -51,7 +51,7 @@ let getSegment = async(req,res)=>{
         }
         responseData[item.segment] = item.categories;
     })
-    console.log(responseData);
+    // console.log(responseData);
     res.status(200).send(responseData);
     }catch(err){
         res.status(403).send({error:err.message});

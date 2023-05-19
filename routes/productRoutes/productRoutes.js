@@ -25,6 +25,7 @@ routes.post('/postCategory', postCategory);
 routes.get('/getSubcategory', getSubcategory);
 routes.get('/getSubcategoryProducts',getSubcategoryProducts);
 routes.get('/getSubcategoryProducts/:id',getSubcategoryProducts);
+
 routes.get('/getAllSubcategoryProducts', getAllSubcategoryProducts);
 routes.post('/postSubcategory', postSubcategory);
 
@@ -64,8 +65,8 @@ routes.get('/getViewMore',getViewMore);
 
 routes.get('/search',searchName);
 routes.get('/alldata',getAllProducts);
-routes.get('/getRating/:val',getRating)
-routes.get('/getFlipkartAssured/:val',getFlipkartAssured)
+routes.get('/es/rating/getSubcategoryProducts/:id',getRating)
+routes.get('/es/fassured/getSubcategoryProducts/:id',getFlipkartAssured);
 routes.post('/postElasticSearch',pushToElasticSearch)
 
 

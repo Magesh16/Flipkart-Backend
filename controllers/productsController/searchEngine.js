@@ -9,9 +9,10 @@ const pushToElasticSearch = async(req,res)=>{
       await Promise.all(products.map(async (product) => {
         const { rows: variations } = await client.query('SELECT * FROM variations WHERE product_items_id = $1', [product.id]);
         const {rows: reviews} = await client.query('SELECT * from reviews where product_items_id=$1',[product.id]);
-        
+        const {rows: category_type}  =await client.query('select c.name from product_items p left join category_type c on p.category_type_id = c.id where p.id=$1',[product.id])
         const document = {
           id: product.id,
+          category_type_id : product.category_type_id,
           name: product.name,
           f_assured: product.f_assured,
           mrp : product.mrp,
@@ -19,6 +20,7 @@ const pushToElasticSearch = async(req,res)=>{
           highlights: product.highlights,
           image_url: product.image_url[0],
           qty_stock: product.qty_stock,
+          category_name : category_type[0]?.name,
           brand : variations[0]?.value,
           rating: reviews[0]?.rating
         };
@@ -53,7 +55,7 @@ const searchProducts = async (name) => {
           }
         }
       });
-      console.log(res)
+      
       return res.hits.hits.map(hit => hit._source);
     } catch (error) {
       return { error: error.message };
@@ -82,7 +84,7 @@ const searchProducts = async (name) => {
             }
           }
         })
-        console.log(response.hits.hits);
+        
         res.status(200).send({status:true, data:response.hits.hits});
       }catch(err){
         res.status(403).send({status: false, error: err})
@@ -91,22 +93,31 @@ const searchProducts = async (name) => {
 
     let getFlipkartAssured = async(req,res)=>{
       try{
-        const val = req.params.val;
+        const id = req.params.id;
+        const val = req.query.val === "true";
+        let conditionArr=[];
+        conditionArr.push({
+          term: {
+            category_type_id: id
+          }
+        },)
+        if(val){
+          conditionArr.push({
+            term: {
+              f_assured: val
+            }
+          })
+        }
         const response = await elasticClient.search({
           index:'products',
           body: {
-            _source: {include: ['id','name','f_assured','image_url','mrp','discount','brand']},
+            _source: {include: ['id','name','f_assured','image_url','mrp','discount','category_name','brand']},
             query: {
               bool: {
-                filter: {
-                  term: {
-                    f_assured: val
-                  }
-                }
-              },
-              
+                must: conditionArr
+              }
+              }       
             }
-          }
         });
         let data = response.hits.hits.map(item => item._source)
         res.status(200).send({status: true,data: data});
@@ -118,7 +129,8 @@ const searchProducts = async (name) => {
 
   let getRating = async(req,res)=>{
     try{
-      const val = req.params.val;
+      const id = req.params.id;
+      const val = req.query.val;
       const response = await elasticClient.search({
         index:'products',
         body: {
@@ -131,6 +143,10 @@ const searchProducts = async (name) => {
                     rating: {
                       gte: val
                     }
+                  }
+                },{
+                  term:{
+                    category_type_id: id
                   }
                 }
               ]

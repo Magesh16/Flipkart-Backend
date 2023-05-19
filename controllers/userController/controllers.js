@@ -47,7 +47,7 @@ let login = async (req, res) => {
   try {
     const mobilenum = req.body.mobilenum;
     const result = await client.query('select id from userinfo where mobilenum =$1',[mobilenum]);
-    console.log(result.rows[0].id);
+    // console.log(result.rows[0].id);
     if(result.rows[0].id){
       sendOTPSMS(mobilenum);  
       return res.status(200).send({status:true,message:"verify the otp"})
@@ -64,7 +64,7 @@ const verifyOTPSMS = async (req, res) => {
   let mobilenum = req.body.mobilenum;
   let userOTP = req.body.otp;
   const savedOtp = otpCacheSMS[mobilenum];
-  console.log(savedOtp);
+  // console.log(savedOtp);
   if (userOTP && savedOtp && savedOtp.otp == userOTP) {
      const token = await signin(mobilenum);
     await client.query('update userinfo set verify =true where mobilenum=$1',[mobilenum]);

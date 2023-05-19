@@ -74,7 +74,7 @@ const verifyOTPEMAILSMS = async(req,res)=>{
   const result = await client.query('select email, mobilenum from userinfo where id=$1',[userId]);
   // const email = result.rows[0].email;
   const mobilenum = result.rows[0].mobilenum;
-  console.log(newEmail);
+  // console.log(newEmail);
   const savedEmailOTP = otpCache[newEmail];
   const savedSMSOTP = otpCacheSMS[mobilenum];
   if (savedSMSOTP.otp == SMSOTP && savedEmailOTP.otp == emailOTP) {

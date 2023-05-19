@@ -10,7 +10,7 @@ const sendOTPSMS = async (mobilenum) => {
   let otp = crypto.randomInt(100000, 999999);
   let expirationOTP = Date.now() + 5 * 60 * 2000;
   const toNumber = mobilenum;
-  console.log(toNumber);
+  // console.log(toNumber);
   otpCacheSMS[toNumber] = { otp, expirationOTP };
    await clientSMS.messages
     .create({
@@ -34,7 +34,7 @@ async function signin(mobilenum){
       [mobilenum],
     );
     let token = result.rows[0].token;
-    console.log("token"+ token);
+    // console.log("token"+ token);
     const userId = result.rows[0].id;
     let payload = { userId: userId };
     if (token == null){

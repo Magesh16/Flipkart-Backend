@@ -42,7 +42,6 @@ const isValidPanNumber = (pan_number)=>{
 
 
     } catch (e) {
-      console.error(e);
       res.status(500).send('Error uploading file');
     }
 
