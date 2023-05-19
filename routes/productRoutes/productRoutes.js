@@ -5,14 +5,14 @@ import { paymentItem, success,failure } from '../../controllers/productsControll
 import { getProducts, postProducts } from '../../controllers/productsController/productItem.js';
 import { getReviews, postReviews, updateDislikeCount, updateLikeCount } from '../../controllers/productsController/reviewItem.js';
 import { getSegment, postSegment,getCategorySubcategory } from '../../controllers/productsController/segment.js';
-import { getSubcategory, postSubcategory ,getSubcategoryProducts} from '../../controllers/productsController/subCategory.js';
+import { getSubcategory, postSubcategory ,getSubcategoryProducts, priceLowToHigh, priceHighToLow} from '../../controllers/productsController/subCategory.js';
 import { getWishList, postWishList, removeWishList } from '../../controllers/productsController/wishlistItem.js';
 import {getOrders} from '../../controllers/productsController/productOrders.js'
 import refToken from '../../middlewares/authorization.js';
 import { getDeliveryStatus, updateDeliveryStatus } from '../../controllers/productsController/shipment.js';
 import { getCoupons, postCoupons } from '../../controllers/productsController/coupons.js';
 import { getShippedDetailsHelpCenter, getViewMore } from '../../controllers/productsController/helpCenter.js';  
-import {getAllProducts, getFlipkartAssured, getRating, pushToElasticSearch, searchName} from '../../controllers/productsController/searchEngine.js';
+import {getAllProducts, getFlipkartAssured, getRating, pushToElasticSearch, searchName, totalProducts} from '../../controllers/productsController/searchEngine.js';
 let routes = express.Router();
 
 routes.get('/getSegment/:id', getSegment);
@@ -25,6 +25,9 @@ routes.post('/postCategory', postCategory);
 routes.get('/getSubcategory', getSubcategory);
 routes.get('/getSubcategoryProducts',getSubcategoryProducts);
 routes.get('/getSubcategoryProducts/:id',getSubcategoryProducts);
+// routes.get('/getSubcategoryProducts/:id/priceLowToHigh',priceLowToHigh)
+// routes.get('/getSubcategoryProducts/:id/priceHighToLow',priceHighToLow)
+
 
 routes.get('/getAllSubcategoryProducts', getAllSubcategoryProducts);
 routes.post('/postSubcategory', postSubcategory);
@@ -65,8 +68,13 @@ routes.get('/getViewMore',getViewMore);
 
 routes.get('/search',searchName);
 routes.get('/alldata',getAllProducts);
-routes.get('/es/rating/getSubcategoryProducts/:id',getRating)
-routes.get('/es/fassured/getSubcategoryProducts/:id',getFlipkartAssured);
+routes.get('/es/getSubcategoryProducts/:id',totalProducts)
+
+
+// routes.get('/es/rating/getSubcategoryProducts/:id',getRating)
+// routes.get('/es/fassured/getSubcategoryProducts/:id',getFlipkartAssured);
+// routes.get('/es/priceLowToHigh/getSubcategoryProducts/:id',priceLowToHigh);
+
 routes.post('/postElasticSearch',pushToElasticSearch)
 
 

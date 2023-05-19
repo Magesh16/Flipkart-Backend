@@ -1,5 +1,6 @@
 import {Client} from '@elastic/elasticsearch';
 import client from '../../utils/database.js';
+import bodybuilder from 'bodybuilder';
 const elasticClient = new Client({ node: 'http://localhost:9200' });
 
 
@@ -9,7 +10,7 @@ const pushToElasticSearch = async(req,res)=>{
       await Promise.all(products.map(async (product) => {
         const { rows: variations } = await client.query('SELECT * FROM variations WHERE product_items_id = $1', [product.id]);
         const {rows: reviews} = await client.query('SELECT * from reviews where product_items_id=$1',[product.id]);
-        const {rows: category_type}  =await client.query('select c.name from product_items p left join category_type c on p.category_type_id = c.id where p.id=$1',[product.id])
+        const {rows: category_type}  =await client.query('select c.name,(p.mrp - (p.mrp * CAST(p.discount AS INTEGER) / 100)) AS price from product_items p left join category_type c on p.category_type_id = c.id where p.id=$1',[product.id])
         const document = {
           id: product.id,
           category_type_id : product.category_type_id,
@@ -22,6 +23,7 @@ const pushToElasticSearch = async(req,res)=>{
           qty_stock: product.qty_stock,
           category_name : category_type[0]?.name,
           brand : variations[0]?.value,
+          price : category_type[0].price,
           rating: reviews[0]?.rating
         };
         
@@ -91,75 +93,108 @@ const searchProducts = async (name) => {
       }
     }
 
-    let getFlipkartAssured = async(req,res)=>{
-      try{
-        const id = req.params.id;
-        const val = req.query.val === "true";
-        let conditionArr=[];
-        conditionArr.push({
-          term: {
-            category_type_id: id
-          }
-        },)
-        if(val){
-          conditionArr.push({
-            term: {
-              f_assured: val
-            }
-          })
-        }
-        const response = await elasticClient.search({
-          index:'products',
-          body: {
-            _source: {include: ['id','name','f_assured','image_url','mrp','discount','category_name','brand']},
-            query: {
-              bool: {
-                must: conditionArr
-              }
-              }       
-            }
-        });
-        let data = response.hits.hits.map(item => item._source)
-        res.status(200).send({status: true,data: data});
-      }catch(err){
-        res.status(403).send({status: false, error: err})
+    let totalProducts = async(req,res)=>{
+      let body = bodybuilder();
+      body = body.filter('term','category_type_id',req.params.id);
+      if(req.query.rating){
+        body = body.filter('range', 'rating',{
+          gte: req.query.rating
+        })
       }
-    }
-
-
-  let getRating = async(req,res)=>{
-    try{
-      const id = req.params.id;
-      const val = req.query.val;
-      const response = await elasticClient.search({
+      if(req.query.f_assured === 'true'){
+        body = body.filter('term','f_assured',true)
+      }
+      if(req.query.sort !== 'desc'){
+        body = body.sort('price', 'asc');
+      }else{
+        body = body.sort('price', 'desc');
+      }
+      body = body.build();
+      const getProductsSearch = await elasticClient.search({
         index:'products',
-        body: {
-          _source: {include: ['id','name','f_assured','image_url','mrp','discount','brand']},
-          query: {
-            bool: {
-              must: [
-                {
-                  range: {
-                    rating: {
-                      gte: val
-                    }
-                  }
-                },{
-                  term:{
-                    category_type_id: id
-                  }
-                }
-              ]
-            }
-          }
-        }
-      });
-      let data = response.hits.hits.map(item => item._source)
-      res.status(200).send({status: true,data: data});
-    }catch(err){
-      res.status(403).send({status: false, error: err})
+        body: body,
+            _source: {include: ['id','name','f_assured','image_url','mrp','discount','category_name','brand','price']},
+      })
+      let data = getProductsSearch.hits.hits.map(item => item._source)
+      res.send(data)
     }
-  }
 
 
-export {pushToElasticSearch, searchName, getAllProducts,getFlipkartAssured, getRating};
+
+
+    // let getFlipkartAssured = async(req,res)=>{
+    //   try{
+    //     const id = req.params.id;
+    //     const val = req.query.val === "true";
+    //     let conditionArr=[];
+    //     conditionArr.push({
+    //       term: {
+    //         category_type_id: id
+    //       }
+    //     },)
+    //     if(val){
+    //       conditionArr.push({
+    //         term: {
+    //           f_assured: val
+    //         }
+    //       })
+    //     }
+    //     const response = await elasticClient.search({
+    //       index:'products',
+    //       body: {
+    //         _source: {include: ['id','name','f_assured','image_url','mrp','discount','category_name','brand']},
+    //         query: {
+    //           bool: {
+    //             must: conditionArr
+    //           }
+    //           }       
+    //         }
+    //     });
+    //     let data = response.hits.hits.map(item => item._source)
+    //     res.status(200).send({status: true,data: data});
+    //   }catch(err){
+    //     res.status(403).send({status: false, error: err})
+    //   }
+    // }
+
+
+  // let getRating = async(req,res)=>{
+  //   try{
+  //     const id = req.params.id;
+  //     const val = req.query.val;
+  //     const response = await elasticClient.search({
+  //       index:'products',
+  //       body: {
+  //         _source: {include: ['id','name','f_assured','image_url','mrp','discount','brand']},
+  //         query: {
+  //           bool: {
+  //             must: [
+  //               {
+  //                 range: {
+  //                   rating: {
+  //                     gte: val
+  //                   }
+  //                 }
+  //               },{
+  //                 term:{
+  //                   category_type_id: id
+  //                 }
+  //               }
+  //             ]
+  //           }
+  //         }
+  //       }
+  //     });
+  //     let data = response.hits.hits.map(item => item._source)
+  //     res.status(200).send({status: true,data: data});
+  //   }catch(err){
+  //     res.status(403).send({status: false, error: err})
+  //   }
+  // }
+
+  
+
+  
+
+
+export {pushToElasticSearch, searchName, getAllProducts,totalProducts};
