@@ -12,7 +12,7 @@ import refToken from '../../middlewares/authorization.js';
 import { getDeliveryStatus, updateDeliveryStatus } from '../../controllers/productsController/shipment.js';
 import { getCoupons, postCoupons } from '../../controllers/productsController/coupons.js';
 import { getShippedDetailsHelpCenter, getViewMore } from '../../controllers/productsController/helpCenter.js';  
-import {getAllProducts, getFlipkartAssured, getRating, pushToElasticSearch, searchName, totalProducts} from '../../controllers/productsController/searchEngine.js';
+import {getAllProducts, pushToElasticSearch, searchName, totalProducts} from '../../controllers/productsController/searchEngine.js';
 let routes = express.Router();
 
 routes.get('/getSegment/:id', getSegment);
