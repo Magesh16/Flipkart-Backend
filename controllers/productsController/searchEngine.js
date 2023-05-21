@@ -109,6 +109,24 @@ const searchProducts = async (name) => {
       }else{
         body = body.sort('price', 'desc');
       }
+      
+      if(req.query.minPrice && req.query.maxPrice){
+        body = body.filter('range', 'price',{
+          gte: req.query.minPrice,
+          lte: req.query.maxPrice
+          })
+      }
+      else if(req.query.minPrice && !req.query.maxPrice){
+        body = body.filter('range', 'price',{
+          gte: req.query.minPrice
+          })
+          }
+      else if(!req.query.minPrice && req.query.maxPrice){
+        body = body.filter('range', 'price',{
+          lte: req.query.maxPrice
+          })
+          }
+
       body = body.build();
       const getProductsSearch = await elasticClient.search({
         index:'products',
@@ -118,81 +136,6 @@ const searchProducts = async (name) => {
       let data = getProductsSearch.hits.hits.map(item => item._source)
       res.send(data)
     }
-
-
-
-
-    // let getFlipkartAssured = async(req,res)=>{
-    //   try{
-    //     const id = req.params.id;
-    //     const val = req.query.val === "true";
-    //     let conditionArr=[];
-    //     conditionArr.push({
-    //       term: {
-    //         category_type_id: id
-    //       }
-    //     },)
-    //     if(val){
-    //       conditionArr.push({
-    //         term: {
-    //           f_assured: val
-    //         }
-    //       })
-    //     }
-    //     const response = await elasticClient.search({
-    //       index:'products',
-    //       body: {
-    //         _source: {include: ['id','name','f_assured','image_url','mrp','discount','category_name','brand']},
-    //         query: {
-    //           bool: {
-    //             must: conditionArr
-    //           }
-    //           }       
-    //         }
-    //     });
-    //     let data = response.hits.hits.map(item => item._source)
-    //     res.status(200).send({status: true,data: data});
-    //   }catch(err){
-    //     res.status(403).send({status: false, error: err})
-    //   }
-    // }
-
-
-  // let getRating = async(req,res)=>{
-  //   try{
-  //     const id = req.params.id;
-  //     const val = req.query.val;
-  //     const response = await elasticClient.search({
-  //       index:'products',
-  //       body: {
-  //         _source: {include: ['id','name','f_assured','image_url','mrp','discount','brand']},
-  //         query: {
-  //           bool: {
-  //             must: [
-  //               {
-  //                 range: {
-  //                   rating: {
-  //                     gte: val
-  //                   }
-  //                 }
-  //               },{
-  //                 term:{
-  //                   category_type_id: id
-  //                 }
-  //               }
-  //             ]
-  //           }
-  //         }
-  //       }
-  //     });
-  //     let data = response.hits.hits.map(item => item._source)
-  //     res.status(200).send({status: true,data: data});
-  //   }catch(err){
-  //     res.status(403).send({status: false, error: err})
-  //   }
-  // }
-
-  
 
   
 
