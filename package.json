@@ -31,6 +31,8 @@
     "pg": "^8.9.0",
     "pg-promise": "^11.4.3",
     "stripe": "^11.13.0",
-    "twilio": "^4.8.0"
+    "swagger-ui-express": "^4.6.3",
+    "twilio": "^4.8.0",
+    "yamljs": "^0.3.0"
   }
 }

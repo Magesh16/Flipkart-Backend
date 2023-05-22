@@ -3,7 +3,7 @@ import {otpCacheSMS, sendOTPSMS, sendEmail, otpCache} from  '../../utils/helper.
 
 let getName = async(req,res)=>{
   try{
-    let {userId} = req.user;
+    console.log(userId);
     let result = await client.query(`select firstName, lastName from userinfo where id =${userId}`);
     res.status(200).send({status: true, message: result.rows[0]})
   }catch(err){
@@ -121,8 +121,11 @@ const verifyOldNewMobileOTP = async(req,res)=>{
   let {userId} = req.user;
   let result = await client.query('select mobilenum from userinfo where id=$1', [userId]);
   const oldMobilenum = result.rows[0].mobilenum;
+  console.log(otpCacheSMS);
   const savedOldOTP  = otpCacheSMS[oldMobilenum].otp;
   const savedNewOTP = otpCacheSMS[newMobilenum].otp;
+  console.log(savedNewOTP == oldOTP);
+  console.log(savedNewOTP == newOTP);
   if(savedOldOTP == oldOTP && savedNewOTP == newOTP){
     await client.query('update userinfo set mobilenum =$1 where id =$2', [newMobilenum, userId]);
     res.status(200).send({status: true, message:"Mobile updated successfully"});

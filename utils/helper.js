@@ -10,7 +10,7 @@ const sendOTPSMS = async (mobilenum) => {
   let otp = crypto.randomInt(100000, 999999);
   let expirationOTP = Date.now() + 5 * 60 * 2000;
   const toNumber = mobilenum;
-  // console.log(toNumber);
+  console.log(toNumber);
   otpCacheSMS[toNumber] = { otp, expirationOTP };
    await clientSMS.messages
     .create({

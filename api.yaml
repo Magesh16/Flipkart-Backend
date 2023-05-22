@@ -1,0 +1,494 @@
+openapi: 3.0.0
+info:
+  title: Flipkart API
+  description: API's for flipkart backend 
+  version: 0.1.9
+  contact:
+    email: mageshsk16@gmail.com
+servers:
+  - url: http://localhost:3000
+    description: This is my localhost
+
+# schemes: [http,https]
+components:
+  securitySchemes:
+    BearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /register:
+    post:
+      tags:
+        - Users
+      summary: Returns the OTP for register.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mobilenum:
+                  type: string
+                  example: "+918798867123"
+      responses:
+        '200':
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "verify the otp"
+        '403':
+          description: Return the Error
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "error"
+
+  /verifyOTPSMS:
+    post:
+      tags:
+        - Users
+      summary: Registering user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mobilenum:
+                  type: string
+                  example: "+918798867123"
+                otp:
+                  type: string
+                  example: "123456"
+      responses:
+        '200':
+          description: Return the object status and message
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Successful"
+                  token:
+                    type: string
+                    example: "token"
+        '401':
+          description: Return the Error
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Invalid OTP"
+          
+  /login:
+    post:
+      tags:
+        - Users
+      summary: Returns the OTP for Login.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mobilenum:
+                  type: string
+                  example: "+918798867123"
+      responses:
+        '200':
+          description: Login to verify OTP
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "verify the otp"
+        '403':
+          description: Please Register
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Please Register"
+  
+
+  /getUser:
+    get:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Returns a list of users.
+      description: Retrieves information about registered users.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    firstname:
+                      type: string
+                    lastname:
+                      type: string
+                    email:
+                      type: string
+                    mobilenum:
+                      type: string
+                    gender:
+                      type: string
+                    verify:
+                      type: boolean
+
+ 
+  /getName:
+    get:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Returns a name of the user.
+      description: Retrieves firstName, lastName about registered users.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+
+  /getProfile:
+    get:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Returns a profile information of the user.
+      description: Retrieves firstName, lastName, gender, email, mobilenum about registered users.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+
+  /updateProfile1:
+    put:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Returns a profile information of the user.
+      description: Retrieves firstName, lastName, gender registered users.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+                gender:
+                  type: string
+      responses:
+        '200':
+          description: Update the firstName, lastName and gender
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Updated successfully"
+        '403':
+          description: Not Updated
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not updated"
+  
+  /updateProfileEmail:
+    put:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Updates a email information of the user.
+      description: Updates email registered users.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Sent OTP to mobile and Email
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "OTP sent to mobile and Email"
+        '403':
+          description: Not Updated
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not updated"
+  /verifyOTPEMAILSMS:
+    post:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Verify the OTP
+      description: Verify the OTP for email and Mobilenumber
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newEmail:
+                  type: string
+                emailOTP:
+                  type: string
+                SMSOTP:
+                  type: string
+      responses:
+        '200':
+          description: Email Updated Successfully
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Email Updated Successfully"
+        '403':
+          description: Not Updated
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not updated"
+  /updateProfileMobileNum:
+    put:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Update the MobileNumber
+      description: Send the OTP Update the MobileNumber
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newMobilenum:
+                  type: string
+      responses:
+        '200':
+          description: Mobilenumber Updated Successfully
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "OTP sent to new mobileNumber and old mobileNumber"
+        '403':
+          description: Not Updated
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Mobilenumber not updated"
+
+  /verifyOldNewMobileOTP:
+    post:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Verify the OTP
+      description: Verify the OTP for old Mobilenumber and new Mobilenumber
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newMobilenum:
+                  type: string
+                newOTP:
+                  type: string
+                oldOTP:
+                  type: string
+      responses:
+        '200':
+          description: Mobilenumber Updated Successfully
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Mobilenumber Updated Successfully"
+        '403':
+          description: Not Updated
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not updated"

@@ -5,11 +5,15 @@ import productRoutes from './routes/productRoutes/productRoutes.js'
 import giftCardRoutes from './routes/giftCardRoutes/giftcardRoutes.js'
 import cors from 'cors';
 import rateLimit from 'express-rate-limit'; 
+import swaggerUI from 'swagger-ui-express';
+import YAML from 'yamljs';
+const swaggerJSDocs = YAML.load("./api.yaml");
 
 let app = express();
 app.use(cors({
     origin:'http://localhost:3000'
 }))
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerJSDocs));
 
 // const limiter  = rateLimit({
 //     windowMs: 15*60*1000,
