@@ -9,9 +9,9 @@ let getWishList = async(req,res)=>{
         left join reviews r on r.product_items_id = pi.id 
         where w.user_id = ${userId} 
         group by pi.id`);
-        res.status(200).send({message:result.rows, status:true});
+        res.status(200).send({status:true, message:result.rows});
     }catch(err){
-        res.status(403).send({error:err.message});
+        res.status(403).send({status:false,error:err.message});
     }
 }
 
@@ -24,10 +24,10 @@ let postWishList = async(req,res)=>{
         res.status(200).send({message: "Product already on wishlist", status:false});
     }else{
     await client.query(`insert into wishlist(user_id, product_items_id) values($1,$2)`,[userId, product_items_id]);
-    res.status(200).send("Inserted successfully");
+    res.status(200).send({status:true, message: "Inserted successfully"});
     }
     }catch(err){
-        res.status(403).send({error: err.message}); 
+        res.status(403).send({status:false, error: err.message}); 
     }
 }
 
@@ -36,9 +36,9 @@ let removeWishList = async(req,res)=>{
         let {userId} = req.user;    
         let product_items_id = req.params.id;
         await client.query('delete from wishlist where product_items_id =$1 and user_id =$2', [product_items_id,userId]);
-        res.status(200).send("Removed successfully");
+        res.status(200).send({ status:true ,message: "Removed successfully"});
     }catch(err){
-        res.status(403).send({error: err.message});
+        res.status(403).send({status:false, error: err.message});
     }
 }
 

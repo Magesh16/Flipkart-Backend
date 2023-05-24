@@ -54,9 +54,9 @@ let saveForLater = async(req,res)=>{
         let product_items_id =req.params.id;
         await client.query(`update product_cart set status =$1 where user_id =$2 and product_items_id=$3`, [true, userId, product_items_id]);
         let result = await client.query(`select * from product_cart where status=${true}`)
-        res.status(200).send({message: 'Save for later', data:result.rows,status: true});
+        res.status(200).send({status: true, message: result.rows});
     }catch(err){
-        res.status(403).send({error: err.message});
+        res.status(403).send({status:false,error: err.message});
     }
 }
 
@@ -77,9 +77,9 @@ let removeCartDetails = async(req,res)=>{
         const {userId} = req.user;
         const product_items_id = req.params.id;
         await client.query('delete from product_cart where user_id=$1 and product_items_id=$2', [userId, product_items_id]);
-        res.status(200).send('Deletion Successfull');
+        res.status(200).send({status:true, message: 'Deletion Successfull'});
     }catch(err){
-        res.status(403).send({error: err.message});
+        res.status(403).send({status:false, error: err.message});
     }
 }
 

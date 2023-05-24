@@ -23,7 +23,7 @@ let success = async (req,res)=>{
     await client.query('update product_orders set status=$1 where order_id =$2',[true, orderId]);
     const shipmentId =2244;
     await client.query('insert into shipment (order_id, user_id, tracking_num) values ($1,$2,$3)',[orderId,userId,shipmentId]);
-    res.status(200).send('Payment Success');
+    res.status(200).send({status:true, message: 'Payment Success'});
   }catch(err){
     res.status(403).send({status:false ,error:err.message});
   }
@@ -45,7 +45,7 @@ let failure = async (req,res)=>{
     const userId  = req.query.userid;
     const orderId = req.query.orderid;
     await client.query('insert into payment (product_items_id, user_id, status,receipt_url, transaction_id) values($1,$2,$3,$4,$5)',[productId,userId,false,receipturi,transactionid]);
-    res.status(403).send('Payment Failure');
+    res.status(403).send({status:false, message:'Payment Failure'});
   }catch(err){
     res.status(403).send({status:false ,error:err.message})
   }
@@ -81,7 +81,7 @@ let paymentItem = async (req, res) => {
       success_url: `http://localhost:3000/success/?sessionid={CHECKOUT_SESSION_ID}&userid= ${userId}&orderid=${orderId} `,
       cancel_url: `http://localhost:3000/cancel/?sessionid={CHECKOUT_SESSION_ID}&userid= ${userId}&orderid=${orderId} `, 
     }); 
-    res.send({id: session.id,url: session.url }); 
+    res.send({status: true, id: session.id,url: session.url }); 
 
   }
   export {paymentItem, success, failure};

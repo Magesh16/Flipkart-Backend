@@ -42,15 +42,15 @@ routes.post('/postCartDetails', refToken, postCartDetails)
 routes.patch('/updateCartDetails/:id',refToken,updateCartDetails);
 routes.delete('/removeCartDetails/:id',refToken,removeCartDetails);
 routes.put('/saveForLater/:id',refToken,saveForLater)
-routes.put('/moveTocart/:id', refToken, moveToCart)
+routes.put('/moveToCart/:id', refToken, moveToCart)
 
 routes.get('/getWishList', refToken, getWishList)
 routes.post('/postWishList/:id',refToken, postWishList)
 routes.delete('/removeWishList/:id',refToken,removeWishList);
 
 routes.get('/paymentItem',refToken, paymentItem);
-routes.post('/success',success)
-routes.post('/failure',failure)
+routes.get('/success',success)
+routes.get('/failure',failure)
 
 routes.get('/getOrders',refToken, getOrders)
 

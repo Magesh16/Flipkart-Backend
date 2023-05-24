@@ -1333,3 +1333,524 @@ paths:
                         example: true
                       message:
                         type: object
+
+  /removeCartDetails/{id}:
+    delete:
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+      summary: Delete a cart product of user.
+      description: Delete the cart registered users.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an product_items
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Deleted successfully"
+        '403':
+          description: Not Deleted
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not Deleted"
+  /saveForLater/{id}:
+    put:
+      tags:
+        - Products
+      security: 
+        - BearerAuth : []
+      summary: Updates the save for later cart
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of product_item
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+  /moveToCart/{id}:
+    put:
+      tags:
+        - Products
+      security: 
+        - BearerAuth : []
+      summary: Updates the move to cart
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of product_item
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+  /getWishList:
+    get:
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+      summary: Returns a wishlist
+      description: Retrieves information about wishlist details.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    status:
+                      type: boolean
+                      example: true
+                    message:
+                      type: object
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+  /postWishList/{id}:
+    post:
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+      summary: Post the wishlist
+      description: Post the wishlist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an user
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: posted Successfully
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "wishlist submitted"
+        '403':
+          description: Not Submitted
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not Submitted"
+
+  /removeWishList/{id}:
+    delete:
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+      summary: Delete a wishlist of user.
+      description: Delete the wishlist registered users.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an product_items
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Deleted successfully"
+        '403':
+          description: Not Deleted
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not Deleted"
+  /paymentItem:
+    get:
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+      summary: Payment process
+      description: Retrieves the payment url redirection
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    status:
+                      type: boolean
+                      example: true
+                    message:
+                      type: object
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+  /getOrders:
+    get:
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+      summary: Retrieves the orders
+      description: Retrieves the orders of user
+      responses:
+        '200':
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    status:
+                      type: boolean
+                      example: true
+                    message:
+                      type: object
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+  /getDeliveryStatus/{id}:
+    get:
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+      summary: Retrieves the delivery status
+      description: Retrieves the delivery status of user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an tracking number
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    status:
+                      type: boolean
+                      example: true
+                    message:
+                      type: object
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+  /updateDeliveryStatus:
+    put:
+      tags:
+        - Products
+      security: 
+        - BearerAuth : []
+      summary: Updates the Delivery Status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                delivery_status:
+                  type: string
+                tracking_num:
+                  type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+  /es/getSubcategoryProducts/{id}:
+    get:
+      tags:
+        - Products
+      summary: Filters using elastic search
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an product_items
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+        - name: rating
+          in: query
+          description: rating of an product_items
+          required: false
+          schema:
+            type: integer
+        - name: sort
+          in: query
+          description: sorting of an product_items
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+        - name: f_assured
+          in: query
+          description: f_assured of an product_items
+          required: false
+          schema:
+            type: boolean
+        - name: minPrice
+          in: query
+          description: minPrice of an product_items
+          required: false
+          schema:
+            type: integer
+        - name: maxPrice
+          in: query
+          description: maxPrice of an product_items
+          required: false
+          schema:
+            type: integer
+        
+      responses:
+        '200':
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    status:
+                      type: boolean
+                      example: true
+                    message:
+                      type: object
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+  /search:
+    get:
+      tags:
+        - Products
+      summary: Search for Products
+      parameters:
+        - name: name
+          in: query
+          description: search value of the product
+          required: true
+          schema:
+            type: string
+            
+      responses:
+        '200':
+          description: Successfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    status:
+                      type: boolean
+                      example: true
+                    message:
+                      type: object
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+      

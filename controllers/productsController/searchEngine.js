@@ -45,13 +45,13 @@ const searchProducts = async (name) => {
       const res = await elasticClient.search({
         index: 'products',
         body: {
-          _source: {include:['id','name']},
+          _source: {include:['id','name','image_url','category_name']},
           query: {
             multi_match: {
                 query : name.toLowerCase(),
                 fuzziness: 'AUTO',
                 type: "bool_prefix",
-                fields: ["name"],
+                fields: ["name","brand","category_name"],
                 minimum_should_match: '2<75%'
             }
           }
@@ -109,6 +109,7 @@ const searchProducts = async (name) => {
       }else{
         body = body.sort('price', 'desc');
       }
+
       
       if(req.query.minPrice && req.query.maxPrice){
         body = body.filter('range', 'price',{

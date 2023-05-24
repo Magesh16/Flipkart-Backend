@@ -16,10 +16,11 @@ let updateDeliveryStatus = async(req,res)=>{
     let {userId} = req.user;
     let status = req.body.delivery_status;
     let trackingNum = req.body.tracking_num;
-    await client.query('update shipment set delivery_status = $1 where tracking_num =$2 and user_id=$3',[status, trackingNum, userId]);
-    res.status(200).send('updation successfull');
+    let result = await client.query('update shipment set delivery_status = $1 where tracking_num =$2 and user_id=$3',[status, trackingNum, userId]);
+    console.log(result.rows);
+    res.status(200).send({status:true, message:'updation successfull'});
     }catch(err){
-        res.status(403).send({error:err.message});
+        res.status(403).send({status: false, error:err.message});
     }
 }
 
