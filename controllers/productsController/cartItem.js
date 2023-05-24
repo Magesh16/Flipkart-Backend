@@ -10,9 +10,9 @@ let getCartDetails = async(req,res)=>{
         return ele;
     });
     const totalPrice = result.rows.reduce((acc, item)=> acc+item.price, 0);
-    res.status(200).send({data:result.rows, totalPrice: totalPrice});
+    res.status(200).send({status: true, message:result.rows, totalPrice: totalPrice});
     }catch(err){
-        res.status(403).send({error: err.message});
+        res.status(403).send({status:false, error: err.message});
     }
 }
 
@@ -22,9 +22,9 @@ let postCartDetails = async(req,res)=>{
     let {product_items_id} =req.body;
     let quantity=1;
     client.query('insert into product_cart (product_items_id, user_id,quantity) values ($1,$2,$3)',[product_items_id,userId, quantity]);
-    res.status(200).send('Insertion Successfull');
+    res.status(200).send({status:true,message:'Insertion Successfull'});
 }catch(err){
-        res.status(403).send({error: err.message});
+        res.status(403).send({status:false,error: err.message});
     }
 }
 
@@ -36,8 +36,10 @@ let updateCartDetails = async(req,res)=>{
         const mrp =  results.rows[0].mrp;
         const discount =  parseInt(results.rows[0].discount);
         const new_price = calculatePrice(mrp,discount);
-        await client.query('update product_cart set quantity= quantity+ $1 where user_id=$2 and product_items_id=$3', [quantity, userId, product_items_id]);
-       let quan = await client.query(`select quantity from product_cart where user_id=$1 and product_items_id=$2`, [userId, product_items_id])
+        await client.query('update product_cart set quantity= quantity+1 where user_id=$1 and product_items_id=$2', [userId, product_items_id]);
+        let quan = await client.query(`select quantity from product_cart where user_id=$1 and product_items_id=$2`, [userId, product_items_id])
+        let quantity = quan.rows[0].quantity;
+        console.log(quantity);
         const updated_price = new_price*quan.rows[0].quantity;
         res.status(200).send({data: results.rows,quantity: quan.rows[0].quantity, updated_price: updated_price}); 
         

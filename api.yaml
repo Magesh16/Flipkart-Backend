@@ -262,7 +262,7 @@ paths:
     put:
       tags:
         - Users
-      security:
+      securputity:
         - BearerAuth: []
       summary: Returns a profile information of the user.
       description: Retrieves firstName, lastName, gender registered users.
@@ -492,3 +492,844 @@ paths:
                       message:
                         type: string
                         example: "Not updated"
+
+  /getAddress:
+    get:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Returns a address of the user.
+      description: Retrieves address about registered users.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+
+  /getAddress/{id}:
+    get:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Returns a user by ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an user
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+
+  /postAddress:
+    post:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Adding the address.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                mobilenum:
+                  type: string
+                address:
+                  type: string
+                pincode:
+                  type: string
+                locality:
+                  type: string
+                city:
+                  type: string
+                state:
+                  type: string
+                landmark:
+                  type: string
+                alternate_phno:
+                  type: string 
+                address_type:
+                  type: string
+                isDefault:
+                  type: boolean
+      responses:
+        '200':
+          description: Address added
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Address added successfully"
+        '403':
+          description: Return the Error
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not Added"
+  
+  /updateAddress/{id}:
+    put:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Updates a address of the user.
+      description: Updates the address registered users.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an address
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      requestBody:
+        # required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                locality:
+                  type: string
+                city:
+                  type: string
+                state:
+                  type: string
+                landmark:
+                  type: string
+                alternate_phno:
+                  type: string 
+                address_type:
+                  type: string
+                isDefault:
+                  type: boolean
+                address:
+                  type: string
+                pincode:
+                  type: string
+                name:
+                  type: string
+                mobilenum:
+                  type: string
+      responses:
+        '200':
+          description: Update the address
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Updated successfully"
+        '403':
+          description: Not Updated
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not updated"
+
+  /deleteAddress/{id}:
+    delete:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Delete a address of the user.
+      description: Delete the address registered users.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an address
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Delete the address
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Deleted successfully"
+        '403':
+          description: Not Deleted
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not Deleted"
+
+  /pan_card:
+    post:
+      tags:
+        - Users
+      security:
+        - BearerAuth: []
+      summary: Post a pan info of the user.
+      description: Post a pan info of the registered users.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                pan_number:
+                  type: string
+                  example: "GDJPM1234T"
+                full_name:
+                  type: string
+                image_url:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: pan info posted
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "pan info added successfully"
+        '403':
+          description: Not posted
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not posted"
+
+
+#Products
+
+  /getSegment/{id}:
+    get:
+      summary: Getting the segment
+      description: Getting the segment with subcategory and category names
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an user
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+        '403':
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+  /getCategorySubcategory:
+    get:
+      summary: Getting the segment with category and subcategory
+      description: Getting the segment with category and subcategory names
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+        '403':
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+                  
+  /getCategory:
+    get:
+      summary: Getting the category
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+        '403':
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+  /getSubcategoryProducts/{id}:
+    get:
+      tags:
+        - Products
+      summary: Returns a catalog products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an user
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+  /getAllSubcategoryProducts:
+    get:
+      summary: Getting all subcategory products
+      tags:
+        - Products
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+        '403':
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+
+  /getProduct/{id}:
+    get:
+      tags:
+        - Products
+      summary: Returns a Products info
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an product
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+
+  /getReviews/{product_items_id}:
+    get:
+      tags:
+        - Products
+      summary: Returns a reviews
+      parameters:
+        - name: product_items_id
+          in: path
+          required: true
+          description: id of an priduct_items
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+
+  /postReviews:
+    post:
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+      summary: Post the reviews
+      description: Post the reviews of particular product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_items_id:
+                  type: integer
+                rating:
+                  type: integer
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Review posted Successfully
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Review submitted"
+        '403':
+          description: Not Submitted
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not Submitted"
+
+  /updateLikeCount/{id}:
+    put:
+      tags:
+        - Products
+      summary: Updates the like count of reviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of review
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+  /updateDislikeCount/{id}:
+    put:
+      tags:
+        - Products
+      summary: Updates the dislike count of reviews
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of review
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+  /getCartDetails:
+     get:
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+      summary: Returns a cart details.
+      description: Retrieves information about cart details.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    status:
+                      type: boolean
+                      example: true
+                    message:
+                      type: object
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: object
+
+  /postCartDetails:
+    post:
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+      summary: Post the cart details
+      description: Post the cart details 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_items_id:
+                  type: integer
+      responses:
+        '200':
+          description: posted Successfully
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "cart details submitted"
+        '403':
+          description: Not Submitted
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: false
+                      message:
+                        type: string
+                        example: "Not Submitted"
+
+  /updateCartDetails/{id}:
+    patch:
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+      summary: update the cart details of the user.
+      description: update the cart details of users.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id of an product_items
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object
+                        
+        '403':
+          description: Error Response
+          content:
+            application/json:
+              schema: 
+                    type: object
+                    properties:
+                      status:
+                        type: boolean
+                        example: true
+                      message:
+                        type: object

@@ -20,9 +20,9 @@ let getCategorySubcategory = async(req,res)=>{
     GROUP BY s.name;
     `);
     // console.log(result.rows[0]);
-    res.status(200).send(result.rows);
+    res.status(200).send({status:true, message:result.rows});
     }catch(err){
-        res.status(403).send({error: err.message})
+        res.status(403).send({status:false, error: err.message})
     }
 }
 let getSegment = async(req,res)=>{
@@ -52,9 +52,9 @@ let getSegment = async(req,res)=>{
         responseData[item.segment] = item.categories;
     })
     // console.log(responseData);
-    res.status(200).send(responseData);
+    res.status(200).send({status:true, message:responseData});
     }catch(err){
-        res.status(403).send({error:err.message});
+        res.status(403).send({status:false,error:err.message});
     }
 }
 

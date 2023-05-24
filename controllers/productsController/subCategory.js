@@ -1,5 +1,4 @@
 import client from "../../utils/database.js";
-import { calculatePrice } from "../../utils/productHelper.js";
 
 let getSubcategory = async (req, res) => {
   try {
@@ -20,9 +19,9 @@ let getSubcategoryProducts = async (req, res) => {
             left join variations as v on v.product_items_id = p.id
             left join reviews as r on r.product_items_id = p.id
             where category_type_id =${id}`);
-    res.status(200).send(result.rows)
+    res.status(200).send({status:true, message:result.rows})
   } catch (err) {
-    res.status(403).send({ error: err.message });
+    res.status(403).send({status:false, error: err.message });
   }
 };
 

@@ -23,11 +23,7 @@ routes.get('/getCategory',getCategory);
 routes.post('/postCategory', postCategory);
 
 routes.get('/getSubcategory', getSubcategory);
-routes.get('/getSubcategoryProducts',getSubcategoryProducts);
 routes.get('/getSubcategoryProducts/:id',getSubcategoryProducts);
-// routes.get('/getSubcategoryProducts/:id/priceLowToHigh',priceLowToHigh)
-// routes.get('/getSubcategoryProducts/:id/priceHighToLow',priceHighToLow)
-
 
 routes.get('/getAllSubcategoryProducts', getAllSubcategoryProducts);
 routes.post('/postSubcategory', postSubcategory);
@@ -39,6 +35,7 @@ routes.get('/getReviews/:product_items_id', getReviews);
 routes.post('/postReviews',refToken, postReviews);
 routes.put('/updateLikeCount/:id',updateLikeCount)
 routes.put('/updateDislikeCount/:id',updateDislikeCount)
+
 
 routes.get('/getCartDetails',refToken, getCartDetails)
 routes.post('/postCartDetails', refToken, postCartDetails)
