@@ -68,9 +68,6 @@ routes.get('/alldata',getAllProducts);
 routes.get('/es/getSubcategoryProducts/:id',totalProducts)
 
 
-// routes.get('/es/rating/getSubcategoryProducts/:id',getRating)
-// routes.get('/es/fassured/getSubcategoryProducts/:id',getFlipkartAssured);
-// routes.get('/es/priceLowToHigh/getSubcategoryProducts/:id',priceLowToHigh);
 
 routes.post('/postElasticSearch',pushToElasticSearch)
 

@@ -9,7 +9,6 @@ servers:
   - url: http://localhost:3000
     description: This is my localhost
 
-# schemes: [http,https]
 components:
   securitySchemes:
     BearerAuth:            
@@ -1826,7 +1825,7 @@ paths:
           required: true
           schema:
             type: string
-            
+
       responses:
         '200':
           description: Successfull response

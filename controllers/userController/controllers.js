@@ -66,6 +66,7 @@ const verifyOTPSMS = async (req, res) => {
   if (userOTP && savedOtp && savedOtp.otp == userOTP) {
      const token = await signin(mobilenum);
     await client.query('update userinfo set verify =true where mobilenum=$1',[mobilenum]);
+    console.log("Login successfull");
     res.send({ status: true, message: "successfull" ,token:token});
   } else {
     res.status(401).send({ status: false, message: "Invalid OTP" });

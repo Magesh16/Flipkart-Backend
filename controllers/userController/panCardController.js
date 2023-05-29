@@ -7,6 +7,21 @@ const isValidPanNumber = (pan_number)=>{
     const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
     return panRegex.test(pan_number);
 }
+
+  let getPanInfo = async(req,res)=>{
+    try{
+      const {userId} = req.user;
+      console.log(userId);
+    let result = await client.query(`select pan_number, full_name from pancard where user_id=$1`,[userId]);
+    if(result.rows[0]== null){
+      return res.status(400).send({message: [], status:false});
+    }
+    res.status(200).send({message:result.rows[0], status: true});
+  }catch(err){
+    res.status(403).send({message:err.message, status:false})
+  }
+  }
+
   let pan_info = async (req, res) => {
     const { pan_number, full_name } = req.body;
     if(!pan_number) return res.status(200).send("Enter the PAN number");
@@ -46,5 +61,5 @@ const isValidPanNumber = (pan_number)=>{
     }
 
   };
-  export {pan_info}
+  export {pan_info, getPanInfo}
 

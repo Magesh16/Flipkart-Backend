@@ -24,7 +24,7 @@ const sendOTPSMS = async (mobilenum) => {
 };
 
 function generateToken(id) {
-    return jwt.sign({userId:id}, process.env.ACCESS_TOKEN, {expiresIn:'30d'});
+    return jwt.sign({...id}, process.env.ACCESS_TOKEN, {expiresIn:'30d'});
   }
 
 async function signin(mobilenum){
@@ -36,7 +36,8 @@ async function signin(mobilenum){
     let token = result.rows[0].token;
     // console.log("token"+ token);
     const userId = result.rows[0].id;
-    let payload = { userId: userId };
+    let payload = {userId};
+    console.log(payload);
     if (token == null){
       console.log("token null");
       token = generateToken(payload);
@@ -45,9 +46,11 @@ async function signin(mobilenum){
         userId,
       ]); 
     } else {
-      jwt.verify(token, process.env.ACCESS_TOKEN, (err, result) => {
-        if (err) {
+      jwt.verify(token, process.env.ACCESS_TOKEN, (err) => {
+        if (!err) {
+          console.log(payload);
           token = generateToken(payload);
+          console.log(token);
           client.query("update userinfo set token =$1 where id = $2", [
             token,
             userId,
@@ -57,7 +60,7 @@ async function signin(mobilenum){
     }
    return token;
   }catch(err){
-    console.log("error"+err.message);
+    console.log("error: "+err.message);
   }
 }
     

@@ -3,7 +3,7 @@ import refToken from '../../middlewares/authorization.js';
 import {getUser, register, login, verifyOTPSMS} from '../../controllers/userController/controllers.js';
 import {getProfile,updateProfile1, updateProfileEmail, updateProfileMobileNum, verifyOtp, verifyOTPEMAILSMS,verifyOldNewMobileOTP, getName} from '../../controllers/userController/profileControllers.js'
 import { deleteAddress,getAddressById, getAddress, postAddress, updateAddress } from '../../controllers/userController/addressController.js';
-import { pan_info } from '../../controllers/userController/panCardController.js';
+import { getPanInfo, pan_info } from '../../controllers/userController/panCardController.js';
 import  {upload} from '../../utils/cloudinary.js'
 let routes = express.Router();
 
@@ -29,6 +29,7 @@ routes.post('/postAddress',refToken, postAddress );
 routes.put('/updateAddress/:id', refToken, updateAddress);
 routes.delete('/deleteAddress/:id', refToken, deleteAddress);
 
+routes.get('/getPanInfo', refToken, getPanInfo);
 routes.post('/pan_card',upload.single('image_url'), refToken, pan_info);
 
 export default routes;
